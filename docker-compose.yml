@@ -1,0 +1,111 @@
+version: "3.8"
+
+services:
+  # ---------------------------------------------------------------------------
+  # PostgreSQL Database (Reports, Findings, Feedback, Domains Cache)
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:15-alpine
+    container_name: offercheck-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-offercheck_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-offercheck_secure_password}
+      POSTGRES_DB: ${POSTGRES_DB:-offercheck_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-offercheck_user} -d ${POSTGRES_DB:-offercheck_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Redis (Cache for domain lookups & Celery Queue)
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: offercheck-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # FastAPI Backend API Server
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: offercheck-backend
+    restart: unless-stopped
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-offercheck_user}:${POSTGRES_PASSWORD:-offercheck_secure_password}@postgres:5432/${POSTGRES_DB:-offercheck_db}
+      - DATABASE_SYNC_URL=postgresql://${POSTGRES_USER:-offercheck_user}:${POSTGRES_PASSWORD:-offercheck_secure_password}@postgres:5432/${POSTGRES_DB:-offercheck_db}
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+      - ALLOWED_ORIGINS=http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ---------------------------------------------------------------------------
+  # Celery Background Worker (Domain Lookups, Safe Browsing, Link Expansion)
+  # ---------------------------------------------------------------------------
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: offercheck-worker
+    restart: unless-stopped
+    command: celery -A app.worker.celery_app worker --loglevel=info -c 2
+    volumes:
+      - ./backend:/app
+    environment:
+      - DATABASE_SYNC_URL=postgresql://${POSTGRES_USER:-offercheck_user}:${POSTGRES_PASSWORD:-offercheck_secure_password}@postgres:5432/${POSTGRES_DB:-offercheck_db}
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ---------------------------------------------------------------------------
+  # Next.js Frontend (Dark Theme)
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: offercheck-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  redis_data:
+

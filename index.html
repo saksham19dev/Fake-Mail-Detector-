@@ -1,0 +1,3049 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OfferCheck | Internship Offer Scam Detection System</title>
+  
+  <!-- Premium Typography: Fraunces (Headings, Verdict Stamp) + Instrument Sans (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600..900;1,9..144,600..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM & THEME: PURE DARK DEEP NAVY BLUE (#0f1626)
+       ========================================================================== */
+    :root, [data-theme="dark"] {
+      color-scheme: dark;
+      --font-heading: 'Fraunces', Georgia, 'Times New Roman', serif;
+      --font-body: 'Instrument Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+      /* Deep Navy Blue Dark Theme Specification */
+      --bg-base: #0f1626;         /* Page background: Deep Navy */
+      --bg-surface: #16203a;      /* Card / panel background */
+      --bg-subtle: #1c2846;       /* Subtle Card */
+      --bg-elevated: #212f52;     /* Elevated surfaces */
+      --border-light: #2a3856;    /* Border / divider */
+      --border-strong: #3b4d75;   /* Strong border */
+
+      --text-primary: #e8edf7;    /* Main text */
+      --text-secondary: #cbd5e1;  /* Secondary text */
+      --text-muted: #95a3bd;      /* Muted text */
+      --text-dim: #64748b;        /* Dim text */
+
+      /* Accent (Buttons & Focus Ring) */
+      --accent: #8ea2ff;
+      --accent-hover: #a5b4ff;
+      --accent-text: #0f1626;
+      --brand: #8ea2ff;
+      --brand-hover: #a5b4ff;
+      --brand-light: rgba(142, 162, 255, 0.15);
+      --brand-border: rgba(142, 162, 255, 0.35);
+
+      /* Risk Indicators (WCAG AA Compliant on #0f1626 & #16203a) */
+      --danger: #ff6b73;          /* Likely Fake (Red) */
+      --danger-hover: #ff525c;
+      --danger-bg: rgba(255, 107, 115, 0.14);
+      --danger-border: rgba(255, 107, 115, 0.4);
+
+      --warning: #f0a63a;         /* Suspicious (Amber) */
+      --warning-bg: rgba(240, 166, 58, 0.14);
+      --warning-border: rgba(240, 166, 58, 0.4);
+
+      --success: #4cc38a;         /* Low Risk (Green) */
+      --success-bg: rgba(76, 195, 138, 0.14);
+      --success-border: rgba(76, 195, 138, 0.4);
+
+      /* Shadows & Geometry */
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;          /* 14px Card Radius per specification */
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.45);
+      --shadow-xl: 0 16px 36px rgba(0, 0, 0, 0.6);
+
+      --transition-fast: all 0.15s ease;
+      --transition-normal: all 0.25s ease;
+    }
+
+    /* ==========================================================================
+       RESET & BASE STYLES
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, .brand-text h1, .inbox-subject-line {
+      font-family: var(--font-heading);
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .app-wrapper {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+      flex: 1;
+    }
+
+    /* ==========================================================================
+       APP NAVBAR & HEADER
+       ========================================================================== */
+    .app-header {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.75rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .brand-block {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .shield-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 1.4rem;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+      flex-shrink: 0;
+    }
+
+    .brand-text h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand-text p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .badge-bu {
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: var(--brand-light);
+      color: var(--brand);
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--brand-border);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .stat-pill strong {
+      color: var(--text-primary);
+    }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.5rem 0.9rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      font-family: inherit;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--brand);
+      color: #ffffff;
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    }
+    .btn-primary:hover {
+      background: var(--brand-hover);
+    }
+
+    .btn-secondary {
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      border-color: var(--border-light);
+    }
+    .btn-secondary:hover {
+      background: var(--border-light);
+    }
+
+    .btn-danger {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border-color: var(--danger-border);
+    }
+    .btn-danger:hover {
+      background: var(--danger);
+      color: #ffffff;
+    }
+
+    .btn-success {
+      background: var(--success-bg);
+      color: var(--success);
+      border-color: var(--success-border);
+    }
+    .btn-success:hover {
+      background: var(--success);
+      color: #ffffff;
+    }
+
+    .btn-icon {
+      padding: 0.5rem;
+      border-radius: var(--radius-sm);
+    }
+
+    /* ==========================================================================
+       APP NAVIGATION TABS
+       ========================================================================== */
+    .app-tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid var(--border-light);
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+      scrollbar-width: thin;
+      padding-bottom: 2px;
+    }
+
+    .tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.65rem 1.1rem;
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .tab-btn.active {
+      color: var(--brand);
+      border-bottom-color: var(--brand);
+    }
+
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==========================================================================
+       SDG BANNER
+       ========================================================================== */
+    .sdg-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .sdg-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
+    }
+    .sdg-chip.sdg16 {
+      border-left: 4px solid #00689D;
+    }
+    .sdg-chip.sdg8 {
+      border-left: 4px solid #A21942;
+    }
+
+    /* ==========================================================================
+       TWO-COLUMN ANALYZER LAYOUT
+       ========================================================================== */
+    .analyzer-layout {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .analyzer-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.25rem;
+      position: relative;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    /* SAMPLE PRESET STRIP */
+    .preset-strip {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .preset-header {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .preset-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+
+    /* FORM ELEMENTS */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 600px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.35rem;
+    }
+
+    .label-hint {
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--text-dim);
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      background: var(--bg-base);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.88rem;
+      transition: var(--transition-fast);
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      background: var(--bg-surface);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 140px;
+      line-height: 1.5;
+    }
+
+    /* ACCORDION */
+    details.accordion-box {
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: var(--bg-subtle);
+      margin-bottom: 1.25rem;
+      overflow: hidden;
+    }
+
+    details.accordion-box summary {
+      padding: 0.75rem 1rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-secondary);
+      user-select: none;
+    }
+
+    details.accordion-box summary:hover {
+      color: var(--text-primary);
+    }
+
+    .accordion-body {
+      padding: 0.25rem 1rem 1rem;
+    }
+
+    /* ==========================================================================
+       RIGHT COLUMN: EVALUATION DASHBOARD
+       ========================================================================== */
+    .results-placeholder {
+      text-align: center;
+      padding: 3.5rem 1.5rem;
+      color: var(--text-muted);
+    }
+    .results-placeholder-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.7;
+    }
+
+    .score-hero-card {
+      background: var(--bg-surface);
+      border: 2px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 1.25rem;
+      transition: var(--transition-normal);
+    }
+
+    .score-hero-card.high {
+      border-color: var(--danger-border);
+      background: linear-gradient(to bottom, var(--danger-bg), var(--bg-surface));
+    }
+    .score-hero-card.medium {
+      border-color: var(--warning-border);
+      background: linear-gradient(to bottom, var(--warning-bg), var(--bg-surface));
+    }
+    .score-hero-card.low {
+      border-color: var(--success-border);
+      background: linear-gradient(to bottom, var(--success-bg), var(--bg-surface));
+    }
+
+    .score-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .risk-badge-large {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 1.1rem;
+      border-radius: var(--radius-full);
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .risk-badge-large.high {
+      background: var(--danger);
+      color: #ffffff;
+    }
+    .risk-badge-large.medium {
+      background: var(--warning);
+      color: #ffffff;
+    }
+    .risk-badge-large.low {
+      background: var(--success);
+      color: #ffffff;
+    }
+
+    .score-number-box {
+      text-align: right;
+    }
+    .score-value {
+      font-size: 2.5rem;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    .score-max {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-dim);
+    }
+
+    /* PROGRESS BAR METER */
+    .progress-bar-wrapper {
+      margin-bottom: 1rem;
+    }
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      background: var(--bg-subtle);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: var(--radius-full);
+      transition: width 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.3s ease;
+    }
+    .progress-ticks {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      font-weight: 600;
+      margin-top: 0.35rem;
+    }
+
+    /* FEE CRITICAL WARNING BANNER */
+    .fee-warning-banner {
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      color: var(--danger);
+      font-size: 0.86rem;
+      font-weight: 600;
+    }
+
+    /* SUMMARY STATS GRID */
+    .summary-pills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .pill-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 0.5rem;
+      text-align: center;
+    }
+    .pill-card .pill-num {
+      font-size: 1.25rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+    .pill-card .pill-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    /* REASONS BREAKDOWN & FILTER */
+    .reasons-filter-bar {
+      display: flex;
+      gap: 0.35rem;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 0.5rem;
+    }
+
+    .filter-btn {
+      padding: 0.25rem 0.6rem;
+      background: transparent;
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    .filter-btn:hover {
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+    }
+    .filter-btn.active {
+      background: var(--brand-light);
+      color: var(--brand);
+    }
+
+    .reasons-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+
+    .reason-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      transition: var(--transition-fast);
+    }
+    .reason-card:hover {
+      border-color: var(--border-strong);
+    }
+
+    .reason-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .tag.red-flag {
+      background: var(--danger);
+      color: #ffffff;
+    }
+    .tag.caution {
+      background: var(--warning);
+      color: #ffffff;
+    }
+    .tag.good-sign {
+      background: var(--success);
+      color: #ffffff;
+    }
+
+    .reason-pts {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .reason-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .reason-desc {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    .reason-snippet {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      display: inline-block;
+      width: fit-content;
+      color: var(--text-primary);
+      margin-top: 0.2rem;
+    }
+
+    /* ACTION CHECKLIST */
+    .action-checklist {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .action-checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+    }
+    .step-badge {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--brand-light);
+      color: var(--brand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       TAB 2: EMAIL PREVIEW / SIMULATOR (WITH INLINE HIGHLIGHTING)
+       ========================================================================== */
+    .inbox-simulator {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 1.5rem;
+    }
+
+    .inbox-toolbar {
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-light);
+      padding: 0.65rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .inbox-header-meta {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .inbox-subject-line {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .inbox-parties {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      font-size: 0.85rem;
+    }
+
+    .inbox-body-view {
+      padding: 1.5rem;
+      white-space: pre-wrap;
+      font-family: var(--font-family);
+      font-size: 0.92rem;
+      line-height: 1.7;
+      color: var(--text-primary);
+      min-height: 220px;
+    }
+
+    /* INLINE HIGHLIGHTERS */
+    mark.highlight-flag {
+      background: rgba(220, 38, 38, 0.2);
+      border-bottom: 2px solid var(--danger);
+      color: inherit;
+      padding: 0.1rem 0.3rem;
+      border-radius: 2px;
+      font-weight: 600;
+    }
+    mark.highlight-caution {
+      background: rgba(217, 119, 6, 0.2);
+      border-bottom: 2px solid var(--warning);
+      color: inherit;
+      padding: 0.1rem 0.3rem;
+      border-radius: 2px;
+      font-weight: 600;
+    }
+    mark.highlight-good {
+      background: rgba(22, 163, 74, 0.2);
+      border-bottom: 2px solid var(--success);
+      color: inherit;
+      padding: 0.1rem 0.3rem;
+      border-radius: 2px;
+      font-weight: 600;
+    }
+
+    /* ==========================================================================
+       TAB 3: BATCH & LAB TEST SUITE
+       ========================================================================== */
+    .test-suite-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+    }
+    .test-suite-table th,
+    .test-suite-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .test-suite-table th {
+      background: var(--bg-subtle);
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+    }
+
+    /* ==========================================================================
+       TAB 4: RULES & TRUSTED DOMAINS CONFIGURATOR
+       ========================================================================== */
+    .domain-chips-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .domain-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-strong);
+      padding: 0.3rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .chip-del {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+      padding: 0 0.15rem;
+    }
+    .chip-del:hover {
+      color: var(--danger);
+    }
+
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1rem;
+    }
+
+    .rule-edit-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    /* ==========================================================================
+       TAB 5: SDG & CYBER FRAUD AWARENESS CENTER
+       ========================================================================== */
+    .sdg-hero-card {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .sdg-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .info-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .info-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* TOAST ALERT */
+    #toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-xl);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      pointer-events: none;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* PRINT STYLES FOR ASSESSMENTS */
+    @media print {
+      body { background: #ffffff !important; color: #000000 !important; }
+      .app-header, .app-tabs, .sdg-strip, .preset-strip, .btn, details, .header-controls { display: none !important; }
+      .analyzer-layout { display: block !important; }
+      .card { border: 1px solid #ccc !important; box-shadow: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+
+  <!-- ========================================================================
+       TOP HEADER & BRAND NAVIGATION
+       ======================================================================== -->
+  <header class="app-header">
+    <div class="brand-block">
+      <div class="shield-icon" aria-hidden="true">🛡️</div>
+      <div class="brand-text">
+        <h1>
+          InternShield
+          <span class="badge-bu">Bennett University &bull; B.Tech CSE</span>
+        </h1>
+        <p>AI-Assisted Email Fraud & Fee Scams Detection Engine</p>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <div class="stat-pill" title="Total emails scanned this session">
+        <span>Scans:</span> <strong id="headerStatTotal">0</strong>
+      </div>
+      <div class="stat-pill" title="High risk scams identified">
+        <span>Scams Blocked:</span> <strong id="headerStatScams" style="color: var(--danger);">0</strong>
+      </div>
+      <button class="btn btn-secondary btn-icon" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Light/Dark Mode">
+        <span id="themeIcon">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       SDG LINK STRIP
+       ======================================================================== -->
+  <div class="sdg-strip">
+    <div class="sdg-chip sdg16" title="Target 16.5: Substantially reduce corruption & bribery; Target 16.4: Combat cyber financial crimes">
+      ⚖️ <strong>Primary SDG 16:</strong> Peace, Justice & Strong Institutions (Student Cyber Fraud Protection)
+    </div>
+    <div class="sdg-chip sdg8" title="Target 8.6: Substantially reduce youth not in employment, education or training">
+      💼 <strong>Secondary SDG 8:</strong> Decent Work & Economic Growth (Fair & Safe Youth Employment)
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       APP TABS NAVIGATION
+       ======================================================================== -->
+  <nav class="app-tabs" aria-label="Main Navigation">
+    <button class="tab-btn active" onclick="switchTab('analyzerTab', this)">
+      🔍 Offer Analyzer
+    </button>
+    <button class="tab-btn" onclick="switchTab('simulatorTab', this)">
+      ✉️ Live Email Simulator
+    </button>
+    <button class="tab-btn" onclick="switchTab('spamVaultTab', this)">
+      🗑️ Spam Vault & Auto-Filter
+    </button>
+    <button class="tab-btn" onclick="switchTab('testSuiteTab', this)">
+      🧪 Lab Test Suite
+    </button>
+    <button class="tab-btn" onclick="switchTab('rulesTab', this)">
+      ⚙️ Rules & Whitelist Manager
+    </button>
+    <button class="tab-btn" onclick="switchTab('sdgTab', this)">
+      📚 SDG & Cybercrime Portal
+    </button>
+  </nav>
+
+  <!-- ========================================================================
+       TAB 1: OFFER ANALYZER (CORE APPLICATION VIEW)
+       ======================================================================== -->
+  <div id="analyzerTab" class="tab-pane active">
+
+    <!-- PRESET LOADER BAR -->
+    <div class="preset-strip">
+      <div class="preset-header">Load Standard Sample Cases for Testing (Real from Sudeepta Chauhan vs Fakes):</div>
+      <div class="preset-buttons">
+        <span style="font-size:0.75rem; font-weight:700; color:var(--success); align-self:center; margin-right:0.25rem;">REAL OFFERS (From: Sudeepta Chauhan):</span>
+        <button type="button" class="btn btn-success" onclick="loadScenario('genuine_cisco')">
+          ✅ Real: Cisco Drive (Sudeepta Chauhan)
+        </button>
+        <button type="button" class="btn btn-success" onclick="loadScenario('genuine_microsoft')">
+          ✅ Real: Microsoft SWE (Sudeepta Chauhan)
+        </button>
+        <button type="button" class="btn btn-success" onclick="loadScenario('genuine_google')">
+          ✅ Real: Google STEP (Sudeepta Chauhan)
+        </button>
+
+        <span style="font-size:0.75rem; font-weight:700; color:var(--danger); align-self:center; margin-left:0.5rem; margin-right:0.25rem;">FAKE OFFERS:</span>
+        <button type="button" class="btn btn-danger" onclick="loadScenario('scam_umeshchandra')">
+          🚨 Live Phishing: Umesh Chandra College Spoof
+        </button>
+        <button type="button" class="btn btn-danger" onclick="loadScenario('scam_lookalike')">
+          🚨 Fake: Spoofing Sudeepta (@bennett-careers.org)
+        </button>
+        <button type="button" class="btn btn-danger" onclick="loadScenario('scam_fee')">
+          🚨 Fake: Laptop Fee (Rahul Verma)
+        </button>
+        <button type="button" class="btn btn-danger" onclick="loadScenario('scam_telegram')">
+          🚨 Fake: Telegram Trap (Pooja Malhotra)
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="resetForm()">
+          🔄 Clear Form
+        </button>
+      </div>
+    </div>
+
+    <div class="analyzer-layout">
+
+      <!-- LEFT COLUMN: INPUT FORM -->
+      <div class="card">
+        <h2 class="card-title">
+          <span>📨 Email Metadata & Content</span>
+          <span style="font-size: 0.75rem; font-weight: normal; color: var(--text-muted);">Self-Contained &bull; 100% Offline</span>
+        </h2>
+
+        <!-- BENNETT OUTLOOK DIRECT MAILBOX CONNECTOR & AUTO-IMPORT -->
+        <div class="outlook-connector-box" style="background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 0.85rem 1rem; margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--success); display: inline-block;"></span>
+              <strong style="font-size: 0.82rem; color: var(--text-primary);">Bennett Outlook Webmail Connected:</strong>
+              <span style="font-family: var(--font-mono); font-size: 0.78rem; background: var(--bg-surface); padding: 0.15rem 0.45rem; border-radius: 4px; border: 1px solid var(--border-light);">S26CSEU2604@bennett.edu.in</span>
+            </div>
+            <a href="https://outlook.cloud.microsoft.com/mail/" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">
+              🌐 Open Bennett Outlook &rarr;
+            </a>
+          </div>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button type="button" class="btn btn-primary" style="font-size: 0.78rem; padding: 0.4rem 0.8rem;" onclick="importFromClipboard()">
+              📋 1-Click Auto-Import Copied Email from Outlook
+            </button>
+            <button type="button" class="btn btn-secondary" style="font-size: 0.78rem; padding: 0.4rem 0.8rem;" onclick="switchTab('spamVaultTab', document.querySelectorAll('.tab-btn')[2])">
+              🗑️ View Spam Vault & Outlook Filter Rules
+            </button>
+          </div>
+          <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.35rem;">
+            💡 <strong>Direct Connect:</strong> Copy any email in your Bennett Outlook inbox, then click <em>Auto-Import</em> to parse and check it in 1 second!
+          </div>
+        </div>
+
+        <form id="offerForm" onsubmit="event.preventDefault(); runAnalysis();">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="inputSender">
+                Sender Email Address *
+                <span class="label-hint">From header</span>
+              </label>
+              <input type="email" id="inputSender" required placeholder="recruiter@company.com">
+            </div>
+
+            <div class="form-group">
+              <label for="inputReplyTo">
+                Reply-To Address
+                <span class="label-hint">(Optional, check headers)</span>
+              </label>
+              <input type="email" id="inputReplyTo" placeholder="Leave empty if same">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="inputSubject">
+              Email Subject Line *
+              <span class="label-hint">Subject field</span>
+            </label>
+            <input type="text" id="inputSubject" required placeholder="e.g. Offer Letter: Direct Selection Web Developer Intern">
+          </div>
+
+          <div class="form-group">
+            <label for="inputBody">
+              Email Body Text *
+              <span class="label-hint" id="wordCountLabel">0 words | 0 characters</span>
+            </label>
+            <textarea id="inputBody" required placeholder="Paste the entire text body of the internship email here..." oninput="updateWordCount()"></textarea>
+          </div>
+
+          <!-- OPTIONAL RAW EMAIL HEADERS ACCORDION -->
+          <details class="accordion-box">
+            <summary>
+              <span>📜 Optional: Raw Email Headers (SPF, DKIM, DMARC check)</span>
+              <span style="font-size: 0.75rem; color: var(--text-dim);">Expand &darr;</span>
+            </summary>
+            <div class="accordion-body">
+              <label for="inputHeaders" style="margin-bottom: 0.35rem;">
+                Raw Headers Block
+                <span class="label-hint">Gmail: 3 dots &rarr; 'Show original'</span>
+              </label>
+              <textarea id="inputHeaders" style="min-height: 90px; font-family: var(--font-mono); font-size: 0.78rem;" placeholder="Paste headers like Received-SPF, Authentication-Results, dkim=pass/fail, dmarc=pass/fail..."></textarea>
+            </div>
+          </details>
+
+          <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+            <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.75rem; font-size: 0.95rem;">
+              ⚡ Run Security Analysis
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="viewInSimulator()">
+              👁️ View in Simulator
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- RIGHT COLUMN: REAL-TIME EVALUATION DASHBOARD -->
+      <div id="evaluationColumn">
+        
+        <!-- INITIAL EMPTY STATE -->
+        <div id="emptyResultsState" class="card results-placeholder">
+          <div class="results-placeholder-icon">🔎</div>
+          <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;">No Email Evaluated Yet</h3>
+          <p style="font-size: 0.85rem; max-width: 320px; margin: 0 auto 1.25rem;">
+            Enter an internship offer on the left or select a sample case above to see real-time heuristic scoring, red flag triggers, and action steps.
+          </p>
+          <button type="button" class="btn btn-danger" onclick="loadScenario('scam_fee')">
+            Try Scam Example Now
+          </button>
+        </div>
+
+        <!-- ACTIVE RESULTS PANEL -->
+        <div id="activeResultsState" style="display: none;">
+
+          <!-- SCORE HERO CARD -->
+          <div class="score-hero-card" id="scoreHeroCard">
+            <div class="score-top-row">
+              <div>
+                <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.25rem;">Risk Assessment</div>
+                <div class="risk-badge-large" id="riskBadgeLarge">HIGH RISK</div>
+              </div>
+              <div class="score-number-box">
+                <span class="score-value" id="scoreValueDisplay">0</span>
+                <span class="score-max">/100</span>
+              </div>
+            </div>
+
+            <!-- VISUAL PROGRESS BAR -->
+            <div class="progress-bar-wrapper">
+              <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+              <div class="progress-ticks">
+                <span>0 (Safe)</span>
+                <span>30 (Caution)</span>
+                <span>70 (High Risk)</span>
+                <span>100</span>
+              </div>
+            </div>
+
+            <!-- MANDATORY PAYMENT OVERRIDE BANNER -->
+            <div id="feeOverrideBanner" class="fee-warning-banner" style="display: none;">
+              <span style="font-size: 1.25rem;">🚨</span>
+              <div>
+                <strong>MANDATORY HIGH RISK OVERRIDE TRIGGERED:</strong>
+                This offer asks for an upfront fee, registration charge, or security deposit. Genuine corporate internships <u>pay</u> you stipend; you never pay them.
+              </div>
+            </div>
+
+            <!-- AUTOMATIC SPAM QUARANTINE PILL -->
+            <div id="autoSpamBanner" class="fee-warning-banner" style="display: none; background: rgba(220, 38, 38, 0.1); border-color: var(--danger-border); color: var(--danger); justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.2rem;">🗑️</span>
+                <div>
+                  <strong>AUTOMATICALLY SENT TO SPAM VAULT:</strong>
+                  This sender has been added to your local Spam Quarantine & Outlook Blocklist!
+                </div>
+              </div>
+              <button type="button" class="btn btn-danger" style="font-size: 0.72rem; padding: 0.2rem 0.5rem; flex-shrink: 0;" onclick="switchTab('spamVaultTab', document.querySelectorAll('.tab-btn')[2])">
+                View Spam Vault &rarr;
+              </button>
+            </div>
+
+            <!-- SUMMARY STATS TILES -->
+            <div class="summary-pills-grid">
+              <div class="pill-card">
+                <div class="pill-num" id="countRedFlags" style="color: var(--danger);">0</div>
+                <div class="pill-label">Red Flags</div>
+              </div>
+              <div class="pill-card">
+                <div class="pill-num" id="countCautions" style="color: var(--warning);">0</div>
+                <div class="pill-label">Cautions</div>
+              </div>
+              <div class="pill-card">
+                <div class="pill-num" id="countGoodSigns" style="color: var(--success);">0</div>
+                <div class="pill-label">Good Signs</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DETECTED SIGNALS CARD -->
+          <div class="card">
+            <div class="card-title">
+              <span>🔍 Detected Heuristic Signals</span>
+              <div class="reasons-filter-bar">
+                <button type="button" class="filter-btn active" onclick="filterSignals('all', this)">All</button>
+                <button type="button" class="filter-btn" onclick="filterSignals('red', this)">Flags</button>
+                <button type="button" class="filter-btn" onclick="filterSignals('caution', this)">Caution</button>
+                <button type="button" class="filter-btn" onclick="filterSignals('good', this)">Good</button>
+              </div>
+            </div>
+
+            <div class="reasons-feed" id="reasonsFeed">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- EMAIL AUTHENTICATION HEADERS CARD (IF PASTED) -->
+          <div class="card" id="headerAuthCard" style="display: none;">
+            <h3 class="card-title" style="font-size: 0.95rem;">
+              <span>🛡️ Email Authentication Verification (SPF/DKIM/DMARC)</span>
+            </h3>
+            <div id="headerAuthGrid" style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- ACTION PLAN & NEXT STEPS -->
+          <div class="card">
+            <h3 class="card-title" style="font-size: 0.95rem;">
+              <span>📋 What To Do Next (Student Protocol)</span>
+            </h3>
+            <ul class="action-checklist">
+              <li>
+                <span class="step-badge">1</span>
+                <div><strong>Verify Company Independently:</strong> Look up their official website and LinkedIn presence. Never rely only on the sender email.</div>
+              </li>
+              <li>
+                <span class="step-badge">2</span>
+                <div><strong>Contact Placement Cell:</strong> Consult Bennett University Career Development Centre (CDC) or your CSE faculty mentor.</div>
+              </li>
+              <li>
+                <span class="step-badge">3</span>
+                <div><strong>Never Transfer Money:</strong> Reject any request for UPI, QR, or bank deposits for "registration" or "training".</div>
+              </li>
+              <li>
+                <span class="step-badge">4</span>
+                <div><strong>Protect Personal Identity:</strong> Never share Aadhaar photos, PAN cards, OTPs, or banking PINs.</div>
+              </li>
+              <li>
+                <span class="step-badge">5</span>
+                <div><strong>Report Incident:</strong> Report financial scams immediately to National Cybercrime Helpline <strong>1930</strong> or <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" style="color:var(--brand); font-weight:600;">cybercrime.gov.in</a>.</div>
+              </li>
+            </ul>
+
+            <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-primary" onclick="copyReport()">
+                📋 Copy Incident Report for CDC
+              </button>
+              <button type="button" class="btn btn-secondary" onclick="window.print()">
+                🖨️ Print Assessment
+              </button>
+            </div>
+
+            <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.75rem; border-left: 2px solid var(--warning); padding-left: 0.5rem;">
+              <strong>Disclaimer:</strong> This tool is an educational heuristic guide. Sender display names and domains can be spoofed. Always verify high-stakes offers with university authorities.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ========================================================================
+       TAB 2: LIVE EMAIL SIMULATOR (INBOX VIEW WITH INLINE HIGHLIGHTING)
+       ======================================================================== -->
+  <div id="simulatorTab" class="tab-pane">
+    <div class="card" style="margin-bottom: 1rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+        <div>
+          <h2 style="font-size: 1.15rem; font-weight: 700;">✉️ Student Inbox Simulator</h2>
+          <p style="font-size: 0.82rem; color: var(--text-muted);">
+            Visualize how this offer appears in a student mailbox, with suspicious phrases highlighted in real-time.
+          </p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-secondary" onclick="switchTab('analyzerTab', document.querySelector('.tab-btn'))">
+            &larr; Back to Analyzer
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="inbox-simulator">
+      <div class="inbox-toolbar" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+        <div style="display: flex; gap: 0.4rem; align-items: center;">
+          <button type="button" id="tabFocusedInbox" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.2rem 0.55rem; background: var(--bg-surface);">
+            📥 Focused Inbox (194)
+          </button>
+          <button type="button" id="tabJunkSpam" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.2rem 0.55rem;">
+            🗑️ Junk Email (Spam)
+          </button>
+        </div>
+        <div id="simRiskIndicator" class="tag" style="background: var(--bg-subtle); color: var(--text-muted);">Awaiting Analysis</div>
+      </div>
+
+      <!-- AUTO-SPAM ROUTED NOTIFICATION IN SIMULATOR -->
+      <div id="simSpamBanner" style="display: none; background: rgba(220, 38, 38, 0.15); border-bottom: 1px solid var(--danger-border); padding: 0.6rem 1rem; color: var(--danger); font-size: 0.8rem; font-weight: 700; align-items: center; gap: 0.5rem;">
+        <span>🚨</span>
+        <span>AUTOMATICALLY MOVED TO JUNK EMAIL (SPAM): This offer triggered multiple fraud heuristics and was blocked from your Focused Inbox.</span>
+      </div>
+      <div id="simSafeBanner" style="display: none; background: rgba(34, 197, 94, 0.15); border-bottom: 1px solid var(--success-border); padding: 0.6rem 1rem; color: var(--success); font-size: 0.8rem; font-weight: 700; align-items: center; gap: 0.5rem;">
+        <span>✅</span>
+        <span>VERIFIED FOCUSED INBOX: Legitimate communication authenticated from official placement cell.</span>
+      </div>
+
+      <div class="inbox-header-meta">
+        <div class="inbox-subject-line" id="simSubjectDisplay">(No Subject)</div>
+        <div class="inbox-parties">
+          <div><strong>From:</strong> <span id="simFromDisplay">unknown@domain.com</span></div>
+          <div id="simReplyToRow" style="display: none;"><strong>Reply-To:</strong> <span id="simReplyToDisplay"></span></div>
+        </div>
+      </div>
+      <div class="inbox-body-view" id="simBodyDisplay">
+        (Paste an email in the Offer Analyzer tab to see it previewed with inline scam indicators here.)
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       TAB: CAMPUS SPAM VAULT & AUTOMATED OUTLOOK BLOCKLIST
+       ======================================================================== -->
+  <div id="spamVaultTab" class="tab-pane">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+        <div>
+          <h2 style="font-size: 1.2rem; font-weight: 800;">🗑️ Campus Spam Quarantine & Outlook Auto-Block</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            All detected fake offers and phishing senders are automatically quarantined here. Export this blocklist directly into your Bennett University Outlook Webmail so future scams go straight to your Junk Email folder!
+          </p>
+        </div>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button type="button" class="btn btn-primary" onclick="exportOutlookBlockedList()">
+            📋 Copy Blocked Senders for Outlook Web
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="copyOutlookRule()">
+            📜 Copy Auto-Spam Filter Rule (.txt)
+          </button>
+          <button type="button" class="btn btn-danger" style="font-size: 0.75rem;" onclick="clearSpamVault()">
+            Clear Vault
+          </button>
+        </div>
+      </div>
+
+      <!-- OUTLOOK SETUP INSTRUCTIONS CARD -->
+      <div style="background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.5rem;">
+        <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>⚙️ How to Auto-Move These Scams to Junk in Bennett Outlook:</span>
+        </h4>
+        <ol style="font-size: 0.82rem; color: var(--text-secondary); padding-left: 1.25rem; line-height: 1.6;">
+          <li>Click <strong>Copy Blocked Senders for Outlook Web</strong> above.</li>
+          <li>Open your <a href="https://outlook.cloud.microsoft.com/mail/" target="_blank" rel="noopener" style="color:var(--brand); font-weight:700;">Bennett University Outlook</a> webmail.</li>
+          <li>Click the ⚙️ <strong>Settings gear icon</strong> (top right) &rarr; <strong>Mail</strong> &rarr; <strong>Junk email</strong>.</li>
+          <li>Under <strong>Blocked senders and domains</strong>, paste the copied addresses and click <strong>Save</strong>.</li>
+          <li>Future fake offers from these domains will be automatically routed straight to your <strong>Junk Email (Spam)</strong> folder!</li>
+        </ol>
+      </div>
+
+      <!-- QUARANTINED SENDERS TABLE -->
+      <table class="test-suite-table">
+        <thead>
+          <tr>
+            <th>Quarantined Sender</th>
+            <th>Threat Category</th>
+            <th>Risk Score</th>
+            <th>Date Added</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="spamVaultBody">
+          <!-- Populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       TAB 3: LAB TEST SUITE (BENCHMARKING 5 SCENARIOS)
+       ======================================================================== -->
+  <div id="testSuiteTab" class="tab-pane">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+        <div>
+          <h2 style="font-size: 1.2rem; font-weight: 800;">🧪 Verification Engine Lab Test Suite</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Automated verification benchmarks across 5 realistic corporate and fraudulent scenarios. Ideal for demonstrating project accuracy to faculty.
+          </p>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="runAllTests()">
+          ▶ Run All 5 Tests Now
+        </button>
+      </div>
+
+      <table class="test-suite-table">
+        <thead>
+          <tr>
+            <th>Scenario Name</th>
+            <th>Type</th>
+            <th>Expected</th>
+            <th>Calculated Score</th>
+            <th>Result Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="testSuiteBody">
+          <!-- Populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       TAB 4: RULES & WHITELIST MANAGER
+       ======================================================================== -->
+  <div id="rulesTab" class="tab-pane">
+    <!-- TRUSTED DOMAINS WHITELIST -->
+    <div class="card">
+      <div class="card-title">
+        <span>🛡️ Trusted Campus & Corporate Whitelist</span>
+        <button type="button" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;" onclick="resetWhitelist()">
+          Reset Defaults
+        </button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Emails sent from these domains receive authenticity bonuses. Lookalike variations of these domains are immediately flagged.
+      </p>
+
+      <div class="domain-chips-box" id="domainChipsContainer">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div style="display: flex; gap: 0.5rem; max-width: 480px;">
+        <input type="text" id="addDomainInput" placeholder="Add domain (e.g. bennett.edu.in, google.com)" onkeydown="if(event.key==='Enter'){event.preventDefault();addDomainFromInput();}">
+        <button type="button" class="btn btn-primary" onclick="addDomainFromInput()">+ Add Domain</button>
+      </div>
+    </div>
+
+    <!-- ACTIVE HEURISTIC RULES EXPLORER -->
+    <div class="card">
+      <h2 class="card-title">⚙️ Active Heuristic Rules & Scoring Weights</h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        These weighted rules power the detection engine. They are organized into categorized blocks with regex triggers:
+      </p>
+
+      <div class="rules-grid" id="rulesExplorerGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       TAB 5: SDG & CYBER FRAUD AWARENESS CENTER
+       ======================================================================== -->
+  <div id="sdgTab" class="tab-pane">
+    <div class="sdg-hero-card">
+      <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #38bdf8; margin-bottom: 0.5rem;">
+        United Nations Sustainable Development Goals Alignment
+      </div>
+      <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.75rem;">
+        Empowering First-Year Engineering Students Against Cyber Exploitation
+      </h2>
+      <p style="font-size: 0.92rem; line-height: 1.6; max-width: 850px; opacity: 0.9;">
+        First-year B.Tech CSE students entering college are highly motivated to secure their first internship. Cyber syndicates capitalize on this optimism by sending deceptive emails demanding registration fees, training deposits, or personal identification. InternShield bridges this critical security gap.
+      </p>
+    </div>
+
+    <div class="sdg-cards-grid">
+      <div class="info-card" style="border-top: 4px solid #00689D;">
+        <h3>⚖️ SDG 16: Peace, Justice & Strong Institutions</h3>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+          <strong>Target 16.4 & 16.5:</strong> Combating organized cybercrime, illicit financial flows, and predatory student extortion.
+        </p>
+        <p style="font-size: 0.82rem; color: var(--text-muted);">
+          InternShield strengthens student institutional resilience by demystifying deceptive email tactics and automating verification against university placement standards.
+        </p>
+      </div>
+
+      <div class="info-card" style="border-top: 4px solid #A21942;">
+        <h3>💼 SDG 8: Decent Work & Economic Growth</h3>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+          <strong>Target 8.6:</strong> Substantially reduce the proportion of youth not in employment, education, or training by protecting legitimate pathways.
+        </p>
+        <p style="font-size: 0.82rem; color: var(--text-muted);">
+          Genuine internships provide fair compensation and professional mentorship. By filtering out fee-charging scams, students invest their time only in high-value, authentic technical opportunities.
+        </p>
+      </div>
+
+      <div class="info-card" style="border-top: 4px solid var(--brand);">
+        <h3>🏛️ Indian Cyber Law & Statutory Provisions</h3>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+          <strong>Information Technology Act, 2000:</strong>
+        </p>
+        <ul style="font-size: 0.8rem; color: var(--text-muted); padding-left: 1rem; line-height: 1.5;">
+          <li><strong>Section 66D:</strong> Punishment for cheating by personation using computer resources (imprisonment up to 3 years and fine).</li>
+          <li><strong>Section 66C:</strong> Identity theft using stolen credentials, OTPs, or signatures.</li>
+          <li><strong>IPC Section 420:</strong> Cheating and dishonestly inducing delivery of property.</li>
+        </ul>
+      </div>
+
+      <div class="info-card" style="border-top: 4px solid var(--danger);">
+        <h3>🚨 Immediate Emergency Reporting Channels</h3>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+          If money has been transferred to a fraudulent recruiter:
+        </p>
+        <ul style="font-size: 0.8rem; color: var(--text-muted); padding-left: 1rem; line-height: 1.5;">
+          <li><strong>Helpline 1930:</strong> Call immediately within the "Golden Hour" to freeze scam UPI/bank accounts.</li>
+          <li><strong>Portal:</strong> Register the incident on <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" style="color:var(--brand); font-weight:700;">cybercrime.gov.in</a>.</li>
+          <li><strong>Bennett University CDC:</strong> Forward the scam report to the Career Development Centre.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST COMPONENT -->
+  <div id="toast" role="alert" aria-live="polite">
+    <span>📋</span> <span id="toastMsg">Action completed</span>
+  </div>
+
+</div>
+
+<!-- ==========================================================================
+     JAVASCRIPT LOGIC & HEURISTICS ENGINE
+     ========================================================================== -->
+<script>
+/**
+ * ============================================================================
+ * 1. HEURISTIC RULES ENGINE (Beginner-Friendly, Highly Readable)
+ * ============================================================================
+ */
+
+const HEURISTIC_RULES = [
+  // 1. PAYMENT DEMANDS (CRITICAL OVERRIDE: ALWAYS FORCES HIGH RISK)
+  {
+    id: "fee_demand",
+    category: "Financial Demand",
+    title: "Upfront Fee or Deposit Request",
+    level: "RED FLAG",
+    weight: 50,
+    isPaymentDemand: true,
+    patterns: [
+      /registration\s*fee/i,
+      /training\s*(fee|charges|deposit)/i,
+      /processing\s*fee/i,
+      /security\s*deposit/i,
+      /laptop\s*(deposit|charges|courier\s*fee|security)/i,
+      /id\s*card\s*(fee|charges)/i,
+      /refundable\s*(fee|amount|deposit|charge)/i,
+      /pay\s*(rs\.?|inr|₹|\$)\s*\d+/i,
+      /transfer\s*(rs\.?|inr|₹|\$)\s*\d+/i,
+      /upi(\s*id)?\s*[:\-]\s*[a-zA-Z0-9.\-_]+@[a-zA-Z]+/i,
+      /\b(gpay|phonepe|paytm|google\s*pay)\b/i,
+      /\bqr\s*code\b/i,
+      /scan\s*(and|&)?\s*pay/i,
+      /send\s*screenshot\s*of\s*(payment|transaction|receipt)/i,
+      /bank\s*transfer\s*details/i,
+      /seat\s*booking\s*fee/i
+    ],
+    explanation: "Genuine employers NEVER ask candidates to pay any registration, training, or equipment fee."
+  },
+
+  // 2. WHATSAPP / TELEGRAM EXCLUSIVITY
+  {
+    id: "suspicious_messaging",
+    category: "Communication Channel",
+    title: "Telegram or WhatsApp-Only Directing",
+    level: "RED FLAG",
+    weight: 25,
+    patterns: [
+      /\bt\.me\/[a-zA-Z0-9_\-]+/i,
+      /\bwa\.me\/[0-9]+/i,
+      /telegram\s*(group|channel|app|only|link|handle)/i,
+      /contact\s*(us\s*)?(only\s*)?on\s*whatsapp/i,
+      /join\s*(our\s*)?telegram/i,
+      /reach\s*out\s*on\s*whatsapp/i
+    ],
+    explanation: "Enterprise employers conduct recruitment through authenticated company email, not anonymous chats."
+  },
+
+  // 3. DIRECT SELECTION / NO INTERVIEW
+  {
+    id: "direct_selection",
+    category: "Recruitment Rigor",
+    title: "Selected Directly Without Any Interview",
+    level: "RED FLAG",
+    weight: 25,
+    patterns: [
+      /selected\s*without\s*(any\s*)?interview/i,
+      /direct\s*(selection|offer|hiring|appointment)/i,
+      /no\s*interview\s*(needed|required|conducted)/i,
+      /selected\s*directly\s*based\s*on\s*(your\s*)?(resume|profile)/i,
+      /immediate\s*offer\s*letter/i,
+      /direct\s*shortlisting\s*without\s*test/i
+    ],
+    explanation: "Real tech internships require at least one coding evaluation, technical round, or HR interview."
+  },
+
+  // 4. ARTIFICIAL URGENCY & PRESSURE
+  {
+    id: "urgency_pressure",
+    category: "Psychological Pressure",
+    title: "Artificial Urgency & Countdown Panic",
+    level: "CAUTION",
+    weight: 15,
+    patterns: [
+      /within\s*24\s*(hours|hrs)/i,
+      /within\s*12\s*(hours|hrs)/i,
+      /offer\s*expires\s*(today|tonight|in\s*\d+\s*hours)/i,
+      /limited\s*(seats|slots)\s*(left|available)/i,
+      /respond\s*immediately/i,
+      /urgent\s*(requirement|joining|confirmation)/i,
+      /last\s*few\s*slots/i
+    ],
+    explanation: "Scammers create artificial panic to prevent students from consulting their parents or mentors."
+  },
+
+  // 5. UNREALISTIC STIPENDS / NO SKILLS BAIT
+  {
+    id: "unrealistic_promises",
+    category: "Compensation Claims",
+    title: "Unrealistically High Stipend or 'No Skills' Claim",
+    level: "CAUTION",
+    weight: 20,
+    patterns: [
+      /no\s*(prior\s*)?skills\s*(or\s*experience\s*)?required/i,
+      /earn\s*(rs\.?|₹|inr)?\s*([4-9]\d|\d{3}),?000\s*(per\s*month|\/month|\/m)/i,
+      /100%\s*placement\s*guarantee/i,
+      /guaranteed\s*stipend\s*without\s*work/i,
+      /easy\s*data\s*entry.*high\s*pay/i,
+      /work\s*1-2\s*hours.*earn\s*daily/i
+    ],
+    explanation: "Offers promising massive stipends for minimal effort or 'no skills' are standard fresher traps."
+  },
+
+  // 6. SENSITIVE CREDENTIALS & ID DEMANDS
+  {
+    id: "identity_theft",
+    category: "Identity & Banking",
+    title: "Requests for Aadhaar, PAN, OTP, or Bank Passwords",
+    level: "RED FLAG",
+    weight: 30,
+    patterns: [
+      /aadhaar\s*(card|number|photo|copy)/i,
+      /pan\s*card\s*(number|photo|details)/i,
+      /\botp\b/i,
+      /debit\s*card\s*(pin|number|cvv)/i,
+      /atm\s*pin/i,
+      /net\s*banking\s*(password|credentials)/i,
+      /cancelled\s*cheque/i
+    ],
+    explanation: "Do not share government IDs or financial credentials over email before official in-person joining."
+  },
+
+  // 7. SUSPICIOUS SOFTWARE INSTALLATIONS
+  {
+    id: "malicious_files",
+    category: "Malware Risk",
+    title: "Request to Run Executables or APKs",
+    level: "RED FLAG",
+    weight: 25,
+    patterns: [
+      /\.exe\b/i,
+      /\.scr\b/i,
+      /\.bat\b/i,
+      /\.apk\b/i,
+      /download\s*(and\s*run|the\s*attached)\s*(tool|setup|software|app)/i,
+      /install\s*our\s*(portal|app|software)\s*to\s*proceed/i,
+      /disable\s*your\s*antivirus/i
+    ],
+    explanation: "Phishing emails often trick candidates into executing Trojans under the guise of an assessment app."
+  },
+
+  // 8. SHORTENED OR MASKED LINKS
+  {
+    id: "shortened_links",
+    category: "Obfuscated Links",
+    title: "Hidden Destination Links (URL Shorteners)",
+    level: "CAUTION",
+    weight: 15,
+    patterns: [
+      /\bbit\.ly\/[a-zA-Z0-9_\-]+/i,
+      /\btinyurl\.com\/[a-zA-Z0-9_\-]+/i,
+      /\brb\.gy\/[a-zA-Z0-9_\-]+/i,
+      /\bis\.gd\/[a-zA-Z0-9_\-]+/i,
+      /\bcutt\.ly\/[a-zA-Z0-9_\-]+/i
+    ],
+    explanation: "URL shorteners conceal malicious domains and bypass basic spam filters."
+  },
+
+  // 9. GENERIC IMPERSONAL GREETING
+  {
+    id: "generic_greeting",
+    category: "Salutation",
+    title: "Impersonal or Generic Greeting",
+    level: "CAUTION",
+    weight: 10,
+    patterns: [
+      /^dear\s+(candidate|student|applicant|job\s*seeker)/im,
+      /^respected\s+(sir|madam|applicant)/im,
+      /^hello\s+applicant/im
+    ],
+    explanation: "Mass spam blasts use generic greetings because scammers do not possess your personalized profile."
+  },
+
+  // 10. COERCIVE THREATS OF PLACEMENT DISQUALIFICATION & REMOVAL
+  {
+    id: "coercive_disqualification",
+    category: "Coercive Pressure",
+    title: "Threat of Placement Disqualification or Batch Removal",
+    level: "RED FLAG",
+    weight: 30,
+    patterns: [
+      /removal\s*from\s*(the\s*)?(current\s*)?training\s*batch/i,
+      /avoid\s*disqualification/i,
+      /no\s*access\s*to\s*(the\s*)?internship\s*(&|and)\s*placement\s*support/i,
+      /no\s*training\s*(&|and)\s*certification\s*for\s*this\s*cycle/i,
+      /no\s*further\s*reminders\s*or\s*deadline\s*extensions/i,
+      /failure\s*to\s*register\s*before\s*the\s*deadline/i
+    ],
+    explanation: "Attackers use coercive threats of 'removal' or 'placement disqualification' to intimidate students into urgent action."
+  },
+
+  // 11. UNVERIFIED GOOGLE FORMS FOR OFFICIAL ENROLLMENT
+  {
+    id: "unverified_forms",
+    category: "Unverified Form",
+    title: "Uses Generic Google Form for Official Academic Enrollment",
+    level: "CAUTION",
+    weight: 20,
+    patterns: [
+      /docs\.google\.com\/forms/i,
+      /forms\.gle\/[a-zA-Z0-9_\-]+/i
+    ],
+    explanation: "Official university academic programs and enterprise drives use authenticated portals, not generic Google Forms."
+  }
+];
+
+// POSITIVE HEURISTIC SIGNS (SCORE REDUCERS)
+const POSITIVE_SIGNS = [
+  {
+    id: "technical_evaluation",
+    title: "Structured Technical Evaluation Round",
+    level: "GOOD SIGN",
+    reduction: 12,
+    patterns: [
+      /coding\s*(assessment|test|round)/i,
+      /technical\s*(interview|round|evaluation)/i,
+      /\bhackerrank\b/i,
+      /\bleetcode\b/i,
+      /panel\s*interview/i,
+      /online\s*assessment\s*link/i
+    ],
+    explanation: "Features a standard multi-stage technical or algorithmic assessment."
+  },
+  {
+    id: "official_ats_portal",
+    title: "Verified Applicant Tracking System / Careers Domain",
+    level: "GOOD SIGN",
+    reduction: 10,
+    patterns: [
+      /\bcareers\.[a-zA-Z0-9\-]+\.[a-zA-Z]{2,}/i,
+      /\bmyworkdayjobs\.com\b/i,
+      /\bgreenhouse\.io\b/i,
+      /\blever\.co\b/i,
+      /\btaleo\.net\b/i,
+      /\bicims\.com\b/i
+    ],
+    explanation: "Directs applicant to an industry-standard enterprise recruitment portal."
+  },
+  {
+    id: "institutional_recruiter",
+    title: "Named Recruiter with Placement Cell Alignment",
+    level: "GOOD SIGN",
+    reduction: 8,
+    patterns: [
+      /campus\s*(relations|recruitment|talent)/i,
+      /career\s*development\s*centre/i,
+      /training\s*(&|and)\s*placement/i,
+      /talent\s*acquisition\s*(lead|manager|specialist)/i
+    ],
+    explanation: "Displays formal corporate recruiter designation and university placement cell collaboration."
+  }
+];
+
+// KNOWN FREE EMAIL DOMAINS
+const FREE_EMAIL_PROVIDERS = [
+  "gmail.com", "googlemail.com", "yahoo.com", "yahoo.co.in", "outlook.com",
+  "hotmail.com", "live.com", "rediffmail.com", "zoho.com", "proton.me",
+  "protonmail.com", "icloud.com", "aol.com", "mail.com", "gmx.com", "yandex.com"
+];
+
+// DEFAULT TRUSTED DOMAINS
+const DEFAULT_TRUSTED_DOMAINS = [
+  "bennett.edu.in",
+  "timesgroup.com",
+  "cisco.com",
+  "microsoft.com",
+  "infosys.com",
+  "tcs.com"
+];
+
+/**
+ * ============================================================================
+ * 2. 5 LAB TEST SCENARIOS
+ * ============================================================================
+ */
+const SCENARIOS = {
+  // --- REAL / GENUINE EMAILS (From: Sudeepta Chauhan, Bennett CDC) ---
+  genuine_cisco: {
+    name: "Real: Cisco Summer Internship (From: Sudeepta Chauhan)",
+    type: "Verified Campus Recruitment",
+    expected: "LOW RISK (0-20)",
+    sender: "sudeepta.chauhan@bennett.edu.in",
+    replyTo: "sudeepta.chauhan@bennett.edu.in",
+    subject: "Bennett Campus Recruitment 2026: Cisco Summer Internship Online Coding Round",
+    body: `Dear B.Tech CSE Students,
+
+Greetings from the Career Development Centre (CDC), Bennett University.
+
+I am pleased to share that the initial screening for the Cisco Summer Internship Program (2027 batch) has been finalized. Shortlisted students are invited to take the Online Technical Assessment round.
+
+Assessment Details:
+- Platform: HackerRank (Technical Coding & Computer Networks MCQs)
+- Test Window: Saturday, 10:00 AM - 11:30 AM
+- Interview Process: Students clearing this assessment will be invited for a technical interview panel followed by an HR interview.
+- Official Portal: Review syllabus and role specifications on the Cisco Careers portal at https://careers.cisco.com/jobs/intern-in.
+
+Important Note: Bennett University and Cisco never charge any registration fee, training deposit, or laptop courier fees at any stage of recruitment. Do not share your password or OTP with anyone.
+
+Best regards,
+Sudeepta Chauhan
+Head - Career Development Centre & Corporate Relations
+Bennett University, Greater Noida
+sudeepta.chauhan@bennett.edu.in`,
+    headers: `Received-SPF: pass (google.com: domain of sudeepta.chauhan@bennett.edu.in designates 209.85.220.41 as permitted sender)
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@bennett.edu.in;
+       spf=pass;
+       dmarc=pass (p=REJECT) header.from=bennett.edu.in`
+  },
+
+  genuine_microsoft: {
+    name: "Real: Microsoft SWE Internship (From: Sudeepta Chauhan)",
+    type: "Verified Campus Recruitment",
+    expected: "LOW RISK (0-20)",
+    sender: "sudeepta.chauhan@bennett.edu.in",
+    replyTo: "sudeepta.chauhan@bennett.edu.in",
+    subject: "CDC Announcement: Microsoft Explore Internship - Technical Round Shortlist",
+    body: `Dear Candidates,
+
+This is regarding the Microsoft Explore Summer Trainee recruitment drive conducted through Bennett University CDC.
+
+Candidates who completed the initial online coding assessment have been shortlisted for the Virtual Technical Interview round.
+
+Interview Details:
+- Panel: Microsoft India Engineering Team
+- Platform: Microsoft Teams (Links shared on CDC portal)
+- Candidacy Tracking: You can also track your candidacy status directly via the Microsoft Careers portal at https://careers.microsoft.com/myworkdayjobs.
+
+Reminder: Neither Bennett University nor Microsoft will ever request security deposits, equipment charges, or money transfers. Never share your bank credentials or OTP.
+
+Warm regards,
+Sudeepta Chauhan
+Lead Coordinator - Training & Placement (CDC)
+Bennett University
+sudeepta.chauhan@bennett.edu.in`,
+    headers: `Received-SPF: pass (google.com: domain of sudeepta.chauhan@bennett.edu.in designates 209.85.220.41 as permitted sender)
+Authentication-Results: mx.google.com; dkim=pass header.i=@bennett.edu.in; spf=pass; dmarc=pass`
+  },
+
+  genuine_google: {
+    name: "Real: Google STEP Internship (From: Sudeepta Chauhan)",
+    type: "Verified Campus Recruitment",
+    expected: "LOW RISK (0-20)",
+    sender: "sudeepta.chauhan@bennett.edu.in",
+    replyTo: "sudeepta.chauhan@bennett.edu.in",
+    subject: "Google STEP Internship 2026: Official Technical Interview Schedule",
+    body: `Dear Students,
+
+We are happy to announce that the Google STEP Internship drive is now officially open for first and second year B.Tech CSE students at Bennett University.
+
+Recruitment Stages:
+1. Online Coding Assessment on Google's technical evaluation platform.
+2. Two technical interview rounds focusing on foundational data structures and problem solving.
+3. Official Application Portal: Review complete job requirements on Google Careers at https://careers.google.com/jobs/results.
+
+Zero-Fee Policy: Bennett University CDC maintains a strict zero-tolerance policy against recruitment fees. Google never demands registration charges, laptop deposits, or banking information.
+
+Best wishes,
+Sudeepta Chauhan
+Career Development Centre (CDC)
+School of Computer Science Engineering and Technology
+Bennett University
+sudeepta.chauhan@bennett.edu.in`,
+    headers: `Received-SPF: pass (google.com: domain of sudeepta.chauhan@bennett.edu.in designates 209.85.220.41 as permitted sender)
+Authentication-Results: mx.google.com; dkim=pass header.i=@bennett.edu.in; spf=pass; dmarc=pass`
+  },
+
+  // --- FAKE / SCAM EMAILS (Lookalikes & Random Names) ---
+  scam_umeshchandra: {
+    name: "Fake: [Final Reminder] Academic Internship Program (Umesh Chandra College Spoof)",
+    type: "Academic Phishing / Extortion",
+    expected: "HIGH RISK (>= 75)",
+    sender: "musaddiquealam511d_2022@umeschandracollege.ac.in",
+    replyTo: "",
+    subject: "[Final Reminder] Academic Internship Program – Enrollment Update",
+    body: `Dear Saksham Giri,
+
+Records show that your enrollment for the Training Program is still pending.
+
+Final Deadline: Tomorrow , 7:30 pm
+Registration Link:
+
+https://docs.google.com/forms/d/e/1FAIpQLSf.../viewform?usp=publish_editor
+
+Failure to register before the deadline will result in:
+• Removal from the current training batch
+• No Training & Certification for this cycle.
+• No access to the Internship & Placement Support associated with this program.
+
+No further reminders or deadline extensions will be provided.
+
+Complete your registration before 7:30 PM to avoid disqualification.
+
+Regards,
+Training & Internship Program Team`,
+    headers: `Received-SPF: softfail (google.com: domain of musaddiquealam511d_2022@umeschandracollege.ac.in does not designate sending IP)
+Authentication-Results: mx.google.com; dkim=none; spf=softfail; dmarc=none`
+  },
+
+  scam_lookalike: {
+    name: "Fake: Impersonating Sudeepta Chauhan (Lookalike Domain)",
+    type: "Lookalike Domain / Fraud",
+    expected: "HIGH RISK (>= 75)",
+    sender: "sudeepta.chauhan@bennett-careers.org",
+    replyTo: "placementdesk2026@gmail.com",
+    subject: "Urgent: Confirmation of Bennett University Internship Offer - Deposit Required",
+    body: `Dear Student,
+
+I am writing to inform you that you have been shortlisted directly for the Bennett Off-Campus Trainee Placement program.
+
+To confirm your seat, you must pay a mandatory document verification charge of Rs. 1500 to the desk UPI id: deskverify@upi within 24 hours. Failure to respond immediately will result in forfeiture of your slot.
+
+Regards,
+Sudeepta Chauhan
+Bennett Placement Desk`,
+    headers: `Received-SPF: fail (domain does not authorize sender)
+Authentication-Results: dkim=fail; spf=fail; dmarc=fail`
+  },
+
+  scam_fee: {
+    name: "Fake: Laptop & Registration Fee Scam (Rahul Verma)",
+    type: "Phishing / Fee Fraud",
+    expected: "HIGH RISK (>= 75)",
+    sender: "recruitment@techsolutions-india.org",
+    replyTo: "quickhr2026@gmail.com",
+    subject: "CONGRATULATIONS: Selected as Web Developer Intern (Immediate Joining)",
+    body: `Dear Candidate,
+
+Congratulations! You have been selected directly without any interview for the Web Development Virtual Internship at TechSolutions India.
+
+Stipend: Rs. 45,000 per month (Guaranteed 100% placement).
+Work from home: 2 hours daily, no skills required!
+
+To confirm your slot within 24 hours, you must pay a mandatory refundable security and laptop courier fee of Rs. 999 via UPI to upi-id: hrtech@upi or scan the attached QR code. Send the payment screenshot immediately to our HR on Telegram: t.me/techsolutions_interns.
+
+Please also send your Aadhaar card photo, PAN card number, and bank account details for stipend processing.
+
+Hurry! Only 3 slots left. Offer expires today.
+
+Regards,
+Rahul Verma
+HR Recruitment Lead, TechSolutions`,
+    headers: `Received-SPF: fail (google.com: domain of recruitment@techsolutions-india.org does not designate 192.0.2.1 as permitted sender) client-ip=192.0.2.1;
+Authentication-Results: mx.google.com;
+       dkim=fail header.i=@techsolutions-india.org;
+       spf=fail;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=techsolutions-india.org`
+  },
+
+  scam_telegram: {
+    name: "Fake: Telegram Data Entry Trap (Pooja Malhotra)",
+    type: "Fake Task Scam",
+    expected: "HIGH RISK (>= 70)",
+    sender: "pooja.careers2026@gmail.com",
+    replyTo: "",
+    subject: "Urgent Freelance Data Entry Interns Required - Earn Rs 40,000/month",
+    body: `Dear Job Seeker,
+
+We have immediate requirements for remote part-time interns. Work 1 hour daily and earn Rs. 40,000 per month. No prior skills or experience required!
+
+Do not reply to this email. Contact our recruitment manager only on Telegram: t.me/fastdata_interns. Send your resume and Aadhaar card copy to begin today. Limited seats available.
+
+Regards,
+Pooja Malhotra
+Online Hiring Team`,
+    headers: ``
+  }
+};
+
+/**
+ * ============================================================================
+ * 3. STATE MANAGEMENT & LIFECYCLE
+ * ============================================================================
+ */
+let whitelist = loadWhitelist();
+let sessionCounters = { total: 0, scams: 0 };
+let lastAnalysisResult = null;
+let currentIncidentReport = "";
+
+function loadWhitelist() {
+  const saved = localStorage.getItem("bu_internshield_whitelist");
+  if (saved) {
+    try {
+      const arr = JSON.parse(saved);
+      if (Array.isArray(arr) && arr.length > 0) return arr;
+    } catch(e) {}
+  }
+  return [...DEFAULT_TRUSTED_DOMAINS];
+}
+
+function saveWhitelist() {
+  localStorage.setItem("bu_internshield_whitelist", JSON.stringify(whitelist));
+  renderWhitelistChips();
+}
+
+function resetWhitelist() {
+  whitelist = [...DEFAULT_TRUSTED_DOMAINS];
+  saveWhitelist();
+  showToast("Whitelist reset to default domains.");
+}
+
+function addDomainFromInput() {
+  const input = document.getElementById("addDomainInput");
+  const val = input.value.trim().toLowerCase();
+  if (!val) return;
+  const clean = val.replace(/^https?:\/\//i, '').replace(/^@/, '').split('/')[0];
+  if (clean && !whitelist.includes(clean)) {
+    whitelist.push(clean);
+    saveWhitelist();
+    input.value = "";
+    showToast(`Added @${clean} to trusted whitelist.`);
+  }
+}
+
+function removeDomain(d) {
+  whitelist = whitelist.filter(item => item !== d);
+  saveWhitelist();
+}
+
+function renderWhitelistChips() {
+  const container = document.getElementById("domainChipsContainer");
+  if (!container) return;
+  container.innerHTML = whitelist.map(d => `
+    <span class="domain-chip">
+      <span>🛡️ ${d}</span>
+      <button type="button" class="chip-del" onclick="removeDomain('${d}')" title="Remove">&times;</button>
+    </span>
+  `).join("");
+}
+
+/**
+ * ============================================================================
+ * 4. CORE SCORING & DETECTION ENGINE
+ * ============================================================================
+ */
+function runAnalysis(customData = null) {
+  const sender = (customData ? customData.sender : document.getElementById("inputSender").value).trim();
+  const replyTo = (customData ? customData.replyTo : document.getElementById("inputReplyTo").value).trim();
+  const subject = (customData ? customData.subject : document.getElementById("inputSubject").value).trim();
+  const body = (customData ? customData.body : document.getElementById("inputBody").value).trim();
+  const rawHeaders = (customData ? customData.headers : document.getElementById("inputHeaders").value).trim();
+
+  if (!sender || !subject || !body) {
+    alert("Please provide at least Sender Email, Subject Line, and Email Body.");
+    return null;
+  }
+
+  const combined = `${subject}\n\n${body}`;
+  const signals = [];
+  let score = 0;
+  let isPaymentForced = false;
+
+  const senderDomain = extractDomain(sender);
+  const replyToDomain = replyTo ? extractDomain(replyTo) : "";
+
+  // 1. WHITELIST MATCH
+  const isTrusted = whitelist.some(t => senderDomain === t || senderDomain.endsWith("." + t));
+  if (isTrusted) {
+    score -= 25;
+    signals.push({
+      level: "GOOD SIGN",
+      title: "Sender Verified in Trusted Whitelist",
+      desc: `The sender domain (@${senderDomain}) matches your verified campus or corporate whitelist.`,
+      snippet: `@${senderDomain}`,
+      points: -25,
+      type: "good"
+    });
+  }
+
+  // 2. LOOKALIKE DETECTION (BENNETT UNIVERSITY SPECIFIC & CORPORATE SPOOFS)
+  if (senderDomain.includes("bennett") && senderDomain !== "bennett.edu.in" && !senderDomain.endsWith(".bennett.edu.in")) {
+    score += 45;
+    signals.push({
+      level: "RED FLAG",
+      title: "Bennett University Lookalike / Impersonation Domain",
+      desc: `Domain "${senderDomain}" mimics Bennett University but is NOT the legitimate '@bennett.edu.in' domain!`,
+      snippet: senderDomain,
+      points: +45,
+      type: "red"
+    });
+  }
+
+  // 2b. EXTERNAL COLLEGE DOMAIN (.ac.in) SENDING ACADEMIC NOTICE TO BENNETT
+  if (senderDomain.endsWith(".ac.in") && !senderDomain.includes("bennett.edu.in")) {
+    score += 35;
+    signals.push({
+      level: "RED FLAG",
+      title: "External College Domain Sending Academic Notice",
+      desc: `Email originates from an external educational institution (@${senderDomain}), not Bennett University (@bennett.edu.in). Often indicates a compromised external student account used to blast fraudulent forms.`,
+      snippet: `@${senderDomain}`,
+      points: +35,
+      type: "red"
+    });
+  }
+
+  // 3. FREE WEBMAIL PROVIDER
+  if (FREE_EMAIL_PROVIDERS.includes(senderDomain)) {
+    score += 25;
+    signals.push({
+      level: "RED FLAG",
+      title: "Sent from Free Webmail Service",
+      desc: `Recruiter uses a personal @${senderDomain} account. Corporate recruiters use formal enterprise domains.`,
+      snippet: sender,
+      points: +25,
+      type: "red"
+    });
+  }
+
+  // 4. REPLY-TO MISMATCH
+  if (replyTo && replyToDomain && replyToDomain !== senderDomain) {
+    score += 25;
+    signals.push({
+      level: "RED FLAG",
+      title: "Sender vs Reply-To Address Mismatch",
+      desc: `Replies are redirected to a different domain (@${replyToDomain}). Classic phishing tactic to divert responses.`,
+      snippet: `From: @${senderDomain} &rarr; Reply-To: @${replyToDomain}`,
+      points: +25,
+      type: "red"
+    });
+  }
+
+  // 5. CONTENT RED FLAG RULES (WITH NEGATION & ADVISORY AWARENESS)
+  HEURISTIC_RULES.forEach(rule => {
+    let matchedText = null;
+    for (const pattern of rule.patterns) {
+      const m = combined.match(pattern);
+      if (m && m.index !== undefined) {
+        // Check for negation or protective disclaimer context (e.g. "never charge any registration fee", "do not share OTP")
+        const prefix = combined.substring(Math.max(0, m.index - 65), m.index).toLowerCase();
+        const isNegated = /(never\s*(ask|charge|request|demand|require|take)?|do\s*not\s*(pay|transfer|send|share)?|don't\s*(pay|transfer|send|share)?|not\s*(require|charge|ask)?|no\s*(fee|deposit|charge|money)?|free\s*of\s*(cost|charge)|caution:|warning:|beware\s*of)/i.test(prefix);
+        
+        if (!isNegated) {
+          matchedText = m[0];
+          break;
+        }
+      }
+    }
+
+    if (matchedText) {
+      if (rule.isPaymentDemand) {
+        isPaymentForced = true;
+      }
+      score += rule.weight;
+      signals.push({
+        level: rule.level,
+        title: rule.title,
+        desc: rule.explanation,
+        snippet: `Trigger: "${matchedText}"`,
+        points: `+${rule.weight}`,
+        type: rule.level === "RED FLAG" ? "red" : "caution",
+        patternText: matchedText
+      });
+    }
+  });
+
+  // 6. POSITIVE HEURISTIC SIGNS
+  POSITIVE_SIGNS.forEach(sign => {
+    let matchedText = null;
+    for (const pattern of sign.patterns) {
+      const m = combined.match(pattern);
+      if (m) {
+        matchedText = m[0];
+        break;
+      }
+    }
+
+    if (matchedText) {
+      score -= sign.reduction;
+      signals.push({
+        level: sign.level,
+        title: sign.title,
+        desc: sign.explanation,
+        snippet: `Trigger: "${matchedText}"`,
+        points: `-${sign.reduction}`,
+        type: "good",
+        patternText: matchedText
+      });
+    }
+  });
+
+  // 7. HEADER SECURITY ANALYSIS (SPF / DKIM / DMARC)
+  let headerReport = null;
+  if (rawHeaders) {
+    headerReport = parseHeaders(rawHeaders);
+    headerReport.forEach(h => {
+      if (h.status === "fail") {
+        score += 20;
+        signals.push({
+          level: "RED FLAG",
+          title: `Header Security Failed: ${h.name}`,
+          desc: h.details,
+          snippet: `${h.name}: FAIL`,
+          points: +20,
+          type: "red"
+        });
+      } else if (h.status === "none") {
+        score += 5;
+        signals.push({
+          level: "CAUTION",
+          title: `Header Missing: ${h.name}`,
+          desc: h.details,
+          snippet: `${h.name}: NOT FOUND`,
+          points: +5,
+          type: "caution"
+        });
+      } else if (h.status === "pass") {
+        score -= 5;
+        signals.push({
+          level: "GOOD SIGN",
+          title: `Header Verified: ${h.name}`,
+          desc: h.details,
+          snippet: `${h.name}: PASS`,
+          points: -5,
+          type: "good"
+        });
+      }
+    });
+  }
+
+  // 8. MANDATORY OVERRIDE RULE
+  // ANY payment request forces at least High risk (minimum 75/100)
+  if (isPaymentForced) {
+    if (score < 75) {
+      score = 75;
+    }
+  }
+
+  // Clamp 0 to 100
+  let finalScore = Math.max(0, Math.min(100, Math.round(score)));
+
+  let riskCategory = "LOW";
+  if (finalScore >= 70) {
+    riskCategory = "HIGH";
+  } else if (finalScore >= 30) {
+    riskCategory = "MEDIUM";
+  }
+
+  // Update counters
+  if (!customData) {
+    sessionCounters.total++;
+    if (riskCategory === "HIGH") sessionCounters.scams++;
+    updateCountersDisplay();
+  }
+
+  const resultPackage = {
+    score: finalScore,
+    riskCategory,
+    isPaymentForced,
+    signals,
+    headerReport,
+    sender,
+    replyTo,
+    subject,
+    body
+  };
+
+  lastAnalysisResult = resultPackage;
+
+  if (!customData) {
+    if (riskCategory === "HIGH") {
+      addToSpamVault(sender, subject, finalScore, "Automated Phishing Threat");
+      const autoSpamBanner = document.getElementById("autoSpamBanner");
+      if (autoSpamBanner) autoSpamBanner.style.display = "flex";
+    } else {
+      const autoSpamBanner = document.getElementById("autoSpamBanner");
+      if (autoSpamBanner) autoSpamBanner.style.display = "none";
+    }
+
+    renderAnalysisOutput(resultPackage);
+    renderSimulatorView(resultPackage);
+  }
+
+  return resultPackage;
+}
+
+/**
+ * ============================================================================
+ * 5. HEADER PARSER (SPF / DKIM / DMARC)
+ * ============================================================================
+ */
+function parseHeaders(text) {
+  const results = [];
+
+  // SPF
+  let spfStatus = "none";
+  let spfDesc = "No SPF record found in pasted headers.";
+  const spfM = text.match(/(?:Received-SPF|spf)=([a-zA-Z]+)/i);
+  if (spfM) {
+    const val = spfM[1].toLowerCase();
+    if (val.includes("pass")) {
+      spfStatus = "pass";
+      spfDesc = "Sending server's IP is officially authorized by the domain owner.";
+    } else if (val.includes("fail") || val.includes("softfail")) {
+      spfStatus = "fail";
+      spfDesc = "Sending IP is NOT authorized to send mail for this domain (spoofing alert).";
+    }
+  }
+  results.push({ name: "SPF", status: spfStatus, details: spfDesc });
+
+  // DKIM
+  let dkimStatus = "none";
+  let dkimDesc = "No DKIM cryptographic signature found.";
+  const dkimM = text.match(/dkim=([a-zA-Z]+)/i) || text.match(/DKIM-Signature:/i);
+  if (dkimM) {
+    const val = (dkimM[1] || "").toLowerCase();
+    if (val.includes("pass") || dkimM[0].toLowerCase().includes("dkim-signature")) {
+      dkimStatus = "pass";
+      dkimDesc = "Cryptographic digital signature verified. Email was unaltered in transit.";
+    } else if (val.includes("fail")) {
+      dkimStatus = "fail";
+      dkimDesc = "Cryptographic signature failed validation. Email may be forged or tampered.";
+    }
+  }
+  results.push({ name: "DKIM", status: dkimStatus, details: dkimDesc });
+
+  // DMARC
+  let dmarcStatus = "none";
+  let dmarcDesc = "Domain has not deployed a DMARC policy.";
+  const dmarcM = text.match(/dmarc=([a-zA-Z]+)/i);
+  if (dmarcM) {
+    const val = dmarcM[1].toLowerCase();
+    if (val.includes("pass")) {
+      dmarcStatus = "pass";
+      dmarcDesc = "Passed domain owner's DMARC alignment security policy.";
+    } else if (val.includes("fail")) {
+      dmarcStatus = "fail";
+      dmarcDesc = "Failed sender domain's DMARC anti-spoofing policy.";
+    }
+  }
+  results.push({ name: "DMARC", status: dmarcStatus, details: dmarcDesc });
+
+  return results;
+}
+
+/**
+ * ============================================================================
+ * 6. RENDERING FUNCTIONS
+ * ============================================================================
+ */
+function renderAnalysisOutput(res) {
+  document.getElementById("emptyResultsState").style.display = "none";
+  document.getElementById("activeResultsState").style.display = "block";
+
+  // Score hero card
+  const heroCard = document.getElementById("scoreHeroCard");
+  heroCard.className = `score-hero-card ${res.riskCategory.toLowerCase()}`;
+
+  const valDisplay = document.getElementById("scoreValueDisplay");
+  valDisplay.textContent = res.score;
+
+  const badge = document.getElementById("riskBadgeLarge");
+  badge.className = `risk-badge-large ${res.riskCategory.toLowerCase()}`;
+  badge.textContent = `${res.riskCategory} RISK ${res.riskCategory === 'HIGH' ? '🚨' : (res.riskCategory === 'MEDIUM' ? '⚠️' : '✅')}`;
+
+  const fill = document.getElementById("progressFill");
+  fill.style.width = `${res.score}%`;
+  if (res.riskCategory === "HIGH") {
+    fill.style.backgroundColor = "var(--danger)";
+  } else if (res.riskCategory === "MEDIUM") {
+    fill.style.backgroundColor = "var(--warning)";
+  } else {
+    fill.style.backgroundColor = "var(--success)";
+  }
+
+  // Payment banner
+  document.getElementById("feeOverrideBanner").style.display = res.isPaymentForced ? "flex" : "none";
+
+  // Counts
+  const reds = res.signals.filter(s => s.type === "red").length;
+  const cautions = res.signals.filter(s => s.type === "caution").length;
+  const goods = res.signals.filter(s => s.type === "good").length;
+
+  document.getElementById("countRedFlags").textContent = reds;
+  document.getElementById("countCautions").textContent = cautions;
+  document.getElementById("countGoodSigns").textContent = goods;
+
+  // Render signal feed
+  renderSignalList(res.signals);
+
+  // Headers report
+  const headerCard = document.getElementById("headerAuthCard");
+  const headerGrid = document.getElementById("headerAuthGrid");
+  if (res.headerReport && res.headerReport.length > 0) {
+    headerCard.style.display = "block";
+    headerGrid.innerHTML = res.headerReport.map(h => `
+      <div style="background: var(--bg-subtle); padding: 0.6rem 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <strong style="font-size: 0.85rem;">${h.name}</strong>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">${h.details}</div>
+        </div>
+        <span class="tag ${h.status === 'pass' ? 'good-sign' : (h.status === 'fail' ? 'red-flag' : 'caution')}">${h.status.toUpperCase()}</span>
+      </div>
+    `).join("");
+  } else {
+    headerCard.style.display = "none";
+  }
+
+  // Incident report string
+  currentIncidentReport = buildIncidentReport(res);
+}
+
+function renderSignalList(signals) {
+  const container = document.getElementById("reasonsFeed");
+  if (!signals || signals.length === 0) {
+    container.innerHTML = `
+      <div class="reason-card">
+        <div class="reason-title">No Common Scam Signals Found</div>
+        <div class="reason-desc">No known fee traps, suspicious handles, or high-pressure markers were detected.</div>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = signals.map(s => `
+    <div class="reason-card" data-type="${s.type}">
+      <div class="reason-head">
+        <span class="tag ${s.type === 'red' ? 'red-flag' : (s.type === 'caution' ? 'caution' : 'good-sign')}">${s.level}</span>
+        <span class="reason-pts">${s.points} pts</span>
+      </div>
+      <div class="reason-title">${escapeHtml(s.title)}</div>
+      <div class="reason-desc">${escapeHtml(s.desc)}</div>
+      ${s.snippet ? `<div class="reason-snippet">${escapeHtml(s.snippet)}</div>` : ''}
+    </div>
+  `).join("");
+}
+
+function filterSignals(type, btn) {
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  const cards = document.querySelectorAll(".reason-card");
+  cards.forEach(card => {
+    if (type === "all") {
+      card.style.display = "flex";
+    } else {
+      card.style.display = (card.getAttribute("data-type") === type) ? "flex" : "none";
+    }
+  });
+}
+
+function renderSimulatorView(res) {
+  document.getElementById("simSubjectDisplay").textContent = res.subject || "(No Subject)";
+  document.getElementById("simFromDisplay").textContent = res.sender || "unknown@domain.com";
+
+  const replyRow = document.getElementById("simReplyToRow");
+  if (res.replyTo) {
+    replyRow.style.display = "block";
+    document.getElementById("simReplyToDisplay").textContent = res.replyTo;
+  } else {
+    replyRow.style.display = "none";
+  }
+
+  const indicator = document.getElementById("simRiskIndicator");
+  indicator.textContent = `${res.riskCategory} RISK`;
+  indicator.className = `tag ${res.riskCategory === 'HIGH' ? 'red-flag' : (res.riskCategory === 'MEDIUM' ? 'caution' : 'good-sign')}`;
+
+  // Update folder switcher & banners
+  const spamBanner = document.getElementById("simSpamBanner");
+  const safeBanner = document.getElementById("simSafeBanner");
+  const tabInbox = document.getElementById("tabFocusedInbox");
+  const tabSpam = document.getElementById("tabJunkSpam");
+
+  if (res.riskCategory === "HIGH") {
+    if (spamBanner) spamBanner.style.display = "flex";
+    if (safeBanner) safeBanner.style.display = "none";
+    if (tabSpam) {
+      tabSpam.style.background = "var(--danger)";
+      tabSpam.style.color = "#ffffff";
+    }
+    if (tabInbox) {
+      tabInbox.style.background = "transparent";
+      tabInbox.style.color = "var(--text-muted)";
+    }
+  } else {
+    if (spamBanner) spamBanner.style.display = "none";
+    if (safeBanner) safeBanner.style.display = "flex";
+    if (tabInbox) {
+      tabInbox.style.background = "var(--bg-surface)";
+      tabInbox.style.color = "var(--text-primary)";
+    }
+    if (tabSpam) {
+      tabSpam.style.background = "transparent";
+      tabSpam.style.color = "var(--text-muted)";
+    }
+  }
+
+  // Highlight suspicious keywords inside the body text
+  let bodyHtml = escapeHtml(res.body);
+
+  // Apply highlight wrappers
+  res.signals.forEach(sig => {
+    if (sig.patternText) {
+      const regex = new RegExp(`(${escapeRegex(sig.patternText)})`, "gi");
+      const cls = sig.type === 'red' ? 'highlight-flag' : (sig.type === 'caution' ? 'highlight-caution' : 'highlight-good');
+      bodyHtml = bodyHtml.replace(regex, `<mark class="${cls}" title="${sig.level}: ${sig.title}">$1</mark>`);
+    }
+  });
+
+  document.getElementById("simBodyDisplay").innerHTML = bodyHtml;
+}
+
+function viewInSimulator() {
+  if (!lastAnalysisResult) {
+    runAnalysis();
+  }
+  const tabs = document.querySelectorAll(".tab-btn");
+  switchTab("simulatorTab", tabs[1]);
+}
+
+/**
+ * ============================================================================
+ * 7. TEST SUITE & BENCHMARK RUNNER
+ * ============================================================================
+ */
+function initTestSuiteTable() {
+  const tbody = document.getElementById("testSuiteBody");
+  tbody.innerHTML = Object.keys(SCENARIOS).map(k => {
+    const s = SCENARIOS[k];
+    return `
+      <tr id="row_${k}">
+        <td><strong>${s.name}</strong></td>
+        <td><span class="tag" style="background:var(--bg-subtle); color:var(--text-secondary);">${s.type}</span></td>
+        <td>${s.expected}</td>
+        <td class="test-score-cell">-</td>
+        <td class="test-status-cell"><span class="tag" style="background:var(--bg-subtle); color:var(--text-dim);">PENDING</span></td>
+        <td>
+          <button type="button" class="btn btn-secondary" style="font-size:0.75rem; padding:0.25rem 0.5rem;" onclick="loadAndRunScenario('${k}')">
+            Load & Analyze
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function runAllTests() {
+  Object.keys(SCENARIOS).forEach(k => {
+    const s = SCENARIOS[k];
+    const res = runAnalysis({
+      sender: s.sender,
+      replyTo: s.replyTo,
+      subject: s.subject,
+      body: s.body,
+      headers: s.headers
+    });
+
+    const row = document.getElementById(`row_${k}`);
+    if (row && res) {
+      row.querySelector(".test-score-cell").innerHTML = `<strong>${res.score}/100</strong> (${res.riskCategory})`;
+      const statusCell = row.querySelector(".test-status-cell");
+      
+      const isExpectedMatch = 
+        (s.expected.includes("HIGH") && res.riskCategory === "HIGH") ||
+        (s.expected.includes("LOW") && res.riskCategory === "LOW") ||
+        (s.expected.includes("MEDIUM") && res.riskCategory === "MEDIUM");
+
+      if (isExpectedMatch) {
+        statusCell.innerHTML = `<span class="tag good-sign">PASSED ✅</span>`;
+      } else {
+        statusCell.innerHTML = `<span class="tag red-flag">REVIEW ⚠️</span>`;
+      }
+    }
+  });
+  showToast("Completed automated test run across all 5 benchmark scenarios!");
+}
+
+function loadAndRunScenario(k) {
+  loadScenario(k);
+  const tabs = document.querySelectorAll(".tab-btn");
+  switchTab("analyzerTab", tabs[0]);
+  runAnalysis();
+}
+
+/**
+ * ============================================================================
+ * 8. RULES EXPLORER & INCIDENT REPORT BUILDER
+ * ============================================================================
+ */
+function renderRulesExplorer() {
+  const container = document.getElementById("rulesExplorerGrid");
+  if (!container) return;
+  container.innerHTML = HEURISTIC_RULES.map(r => `
+    <div class="rule-edit-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="tag ${r.level === 'RED FLAG' ? 'red-flag' : 'caution'}">${r.level}</span>
+        <span style="font-weight:700; font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">+${r.weight} pts</span>
+      </div>
+      <div style="font-weight:700; font-size:0.9rem;">${r.title}</div>
+      <div style="font-size:0.78rem; color:var(--text-secondary);">${r.explanation}</div>
+      <div style="font-size:0.72rem; color:var(--text-dim); margin-top:0.25rem;">Patterns: ${r.patterns.length} compiled regular expressions</div>
+    </div>
+  `).join("");
+}
+
+function buildIncidentReport(data) {
+  const now = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+  let signalsText = data.signals.map(s => `  • [${s.level}] ${s.title}: ${s.desc}`).join("\n");
+  if (!signalsText) signalsText = "  • No major red flags identified.";
+
+  return `==================================================================
+🚨 INTERNSHIP FRAUD REPORT: BENNETT UNIVERSITY CAREER CELL
+==================================================================
+Date & Time: ${now} (IST)
+Evaluation Platform: InternShield Automated Checker (B.Tech CSE Initiative)
+
+SENDER DETAILS:
+• Sender Email: ${data.sender}
+• Reply-To Address: ${data.replyTo || "Same as Sender"}
+• Email Subject: ${data.subject}
+
+ASSESSMENT RESULT:
+• Risk Level: ${data.riskCategory} RISK (${data.score}/100)
+• Payment Request Detected: ${data.isPaymentForced ? "YES (Mandatory Fraud Alert)" : "NO"}
+
+DETECTED FRAUD INDICATORS:
+${signalsText}
+
+STUDENT ACTION PROTOCOL:
+1. Do not transfer funds or make UPI/QR payments under any condition.
+2. Do not share Aadhaar cards, PAN copies, OTPs, or passwords.
+3. Verification logged for Career Development Centre (CDC) review.
+==================================================================`;
+}
+
+function copyReport() {
+  if (!currentIncidentReport) {
+    showToast("Please run an analysis first.");
+    return;
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(currentIncidentReport).then(() => {
+      showToast("Incident report copied to clipboard!");
+    }).catch(() => fallbackCopy(currentIncidentReport));
+  } else {
+    fallbackCopy(currentIncidentReport);
+  }
+}
+
+function fallbackCopy(text) {
+  const t = document.createElement("textarea");
+  t.value = text;
+  t.style.position = "fixed";
+  t.style.left = "-9999px";
+  document.body.appendChild(t);
+  t.select();
+  try {
+    document.execCommand("copy");
+    showToast("Incident report copied to clipboard!");
+  } catch(e) {
+    showToast("Failed to auto-copy. Please copy manually.");
+  }
+  document.body.removeChild(t);
+}
+
+/**
+ * ============================================================================
+ * 9. UI HELPERS & NAVIGATION
+ * ============================================================================
+ */
+function switchTab(tabId, btn) {
+  document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+
+  const target = document.getElementById(tabId);
+  if (target) target.classList.add("active");
+  if (btn) btn.classList.add("active");
+}
+
+function loadScenario(key) {
+  const s = SCENARIOS[key];
+  if (!s) return;
+  document.getElementById("inputSender").value = s.sender;
+  document.getElementById("inputReplyTo").value = s.replyTo;
+  document.getElementById("inputSubject").value = s.subject;
+  document.getElementById("inputBody").value = s.body;
+  document.getElementById("inputHeaders").value = s.headers || "";
+  updateWordCount();
+  showToast(`Loaded: ${s.name}`);
+}
+
+function resetForm() {
+  document.getElementById("offerForm").reset();
+  document.getElementById("inputHeaders").value = "";
+  document.getElementById("emptyResultsState").style.display = "block";
+  document.getElementById("activeResultsState").style.display = "none";
+  lastAnalysisResult = null;
+  currentIncidentReport = "";
+  updateWordCount();
+  showToast("Form cleared.");
+}
+
+function updateWordCount() {
+  const text = document.getElementById("inputBody").value.trim();
+  const words = text ? text.split(/\s+/).length : 0;
+  const chars = text.length;
+  document.getElementById("wordCountLabel").textContent = `${words} words | ${chars} characters`;
+}
+
+function updateCountersDisplay() {
+  document.getElementById("headerStatTotal").textContent = sessionCounters.total;
+  document.getElementById("headerStatScams").textContent = sessionCounters.scams;
+}
+
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  document.getElementById("toastMsg").textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3200);
+}
+
+function extractDomain(email) {
+  const idx = email.lastIndexOf("@");
+  if (idx === -1) return email.toLowerCase().trim();
+  return email.substring(idx + 1).toLowerCase().trim();
+}
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+function escapeRegex(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute("data-theme");
+  const next = cur === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("bu_internshield_theme", next);
+
+  const icon = document.getElementById("themeIcon");
+  icon.textContent = next === "dark" ? "☀️" : "🌙";
+}
+
+// ============================================================================
+// SPAM VAULT & OUTLOOK AUTO-BLOCK INTEGRATION
+// ============================================================================
+let spamVault = loadSpamVault();
+
+function loadSpamVault() {
+  const saved = localStorage.getItem("bu_internshield_spam_vault");
+  if (saved) {
+    try {
+      const arr = JSON.parse(saved);
+      if (Array.isArray(arr) && arr.length > 0) return arr;
+    } catch(e) {}
+  }
+  return [
+    { sender: "musaddiquealam511d_2022@umeschandracollege.ac.in", subject: "[Final Reminder] Academic Internship Program – Enrollment Update", score: 100, category: "Academic Phishing (Umesh Chandra College)", date: "Today" },
+    { sender: "sudeepta.chauhan@bennett-careers.org", subject: "Urgent: Confirmation of Bennett University Internship Offer - Deposit Required", score: 100, category: "Lookalike Domain Spoof", date: "24/11/2026" },
+    { sender: "recruitment@techsolutions-india.org", subject: "CONGRATULATIONS: Selected as Web Developer Intern (Immediate Joining)", score: 100, category: "Laptop & Registration Fee Fraud", date: "24/11/2026" },
+    { sender: "pooja.careers2026@gmail.com", subject: "Urgent Freelance Data Entry Interns Required", score: 100, category: "Telegram Task Trap", date: "24/11/2026" }
+  ];
+}
+
+function saveSpamVault() {
+  localStorage.setItem("bu_internshield_spam_vault", JSON.stringify(spamVault));
+  renderSpamVault();
+}
+
+function addToSpamVault(sender, subject, score, category) {
+  if (!sender) return;
+  const existing = spamVault.find(s => s.sender.toLowerCase() === sender.toLowerCase());
+  if (!existing) {
+    spamVault.unshift({
+      sender,
+      subject: subject || "Suspicious Internship Offer",
+      score,
+      category: category || "High Risk Phishing",
+      date: "Just now"
+    });
+    saveSpamVault();
+  }
+}
+
+function renderSpamVault() {
+  const tbody = document.getElementById("spamVaultBody");
+  if (!tbody) return;
+  if (spamVault.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:1.5rem;">No quarantined senders. When high risk emails are scanned, they will automatically appear here.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = spamVault.map((item, idx) => `
+    <tr>
+      <td><strong style="font-family:var(--font-mono); font-size:0.8rem;">${escapeHtml(item.sender)}</strong></td>
+      <td><span class="tag red-flag">${escapeHtml(item.category)}</span></td>
+      <td><span style="font-weight:700; color:var(--danger);">${item.score}/100</span></td>
+      <td style="font-size:0.8rem; color:var(--text-muted);">${item.date}</td>
+      <td>
+        <button type="button" class="btn btn-secondary" style="font-size:0.7rem; padding:0.2rem 0.5rem;" onclick="removeSpamItem(${idx})">
+          Remove
+        </button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function removeSpamItem(idx) {
+  spamVault.splice(idx, 1);
+  saveSpamVault();
+  showToast("Sender removed from Spam Vault.");
+}
+
+function clearSpamVault() {
+  if (confirm("Clear all quarantined senders?")) {
+    spamVault = [];
+    saveSpamVault();
+    showToast("Spam Vault cleared.");
+  }
+}
+
+function exportOutlookBlockedList() {
+  const senders = spamVault.map(s => s.sender).join("\n");
+  if (!senders) {
+    showToast("Spam Vault is empty.");
+    return;
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(senders).then(() => {
+      showToast("Blocked senders copied! Paste in Outlook: Settings > Mail > Junk email.");
+    }).catch(() => fallbackCopy(senders));
+  } else {
+    fallbackCopy(senders);
+  }
+}
+
+function copyOutlookRule() {
+  const senders = spamVault.map(s => s.sender).join(", ");
+  const ruleText = `BENNETT OUTLOOK AUTO-MOVE TO JUNK RULE:
+Name: Auto-Divert Internship Scams to Junk
+Condition: From sender address contains: ${senders}
+Action: Move to 'Junk Email' AND Mark as Read AND Stop processing more rules.`;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(ruleText).then(() => {
+      showToast("Outlook rule text copied to clipboard!");
+    }).catch(() => fallbackCopy(ruleText));
+  } else {
+    fallbackCopy(ruleText);
+  }
+}
+
+async function importFromClipboard() {
+  try {
+    let text = "";
+    if (navigator.clipboard && navigator.clipboard.readText) {
+      text = await navigator.clipboard.readText();
+    }
+    if (!text || text.trim() === "") {
+      const manual = prompt("Paste your copied email text from Outlook here:");
+      if (!manual) return;
+      text = manual;
+    }
+    parseAndLoadEmailText(text);
+  } catch (err) {
+    const manual = prompt("Paste your copied email text from Outlook here:");
+    if (manual) parseAndLoadEmailText(manual);
+  }
+}
+
+function parseAndLoadEmailText(raw) {
+  let sender = "";
+  let subject = "";
+  let body = raw;
+
+  const fromMatch = raw.match(/From:\s*([^\r\n]+)/i);
+  if (fromMatch) {
+    const fromLine = fromMatch[1];
+    const emailMatch = fromLine.match(/<([^>]+)>/) || fromLine.match(/([a-zA-Z0-9.\-_]+@[a-zA-Z0-9.\-_]+\.[a-zA-Z]{2,})/);
+    if (emailMatch) sender = emailMatch[1] || emailMatch[0];
+  }
+
+  const subMatch = raw.match(/Subject:\s*([^\r\n]+)/i);
+  if (subMatch) {
+    subject = subMatch[1].trim();
+  }
+
+  if (fromMatch || subMatch) {
+    body = raw.replace(/From:[^\r\n]+/i, '')
+              .replace(/To:[^\r\n]+/i, '')
+              .replace(/Subject:[^\r\n]+/i, '')
+              .replace(/Date:[^\r\n]+/i, '')
+              .replace(/Sent:[^\r\n]+/i, '')
+              .trim();
+  }
+
+  if (sender) document.getElementById("inputSender").value = sender;
+  if (subject) document.getElementById("inputSubject").value = subject;
+  document.getElementById("inputBody").value = body;
+  updateWordCount();
+  showToast("Auto-imported email from Outlook! Running analysis...");
+  runAnalysis();
+}
+
+// Initial Boot
+window.addEventListener("DOMContentLoaded", () => {
+  renderWhitelistChips();
+  renderRulesExplorer();
+  initTestSuiteTable();
+  renderSpamVault();
+
+  const savedTheme = localStorage.getItem("bu_internshield_theme") || "light";
+  document.documentElement.setAttribute("data-theme", savedTheme);
+  document.getElementById("themeIcon").textContent = savedTheme === "dark" ? "☀️" : "🌙";
+});
+</script>
+
+</body>
+</html>

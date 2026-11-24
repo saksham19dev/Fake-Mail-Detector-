@@ -1,0 +1,303 @@
+# ==============================================================================
+# OfferCheck - Heuristic Detection Rules (rules.yaml)
+# Defines regex patterns, weights, levels, and plain-language explanations.
+# ==============================================================================
+
+version: "1.0"
+
+rules:
+  # ----------------------------------------------------------------------------
+  # 1. UPFRONT FEE & PAYMENT REQUESTS (Critical Override Trigger)
+  # ----------------------------------------------------------------------------
+  - id: "RULE_FEE_REQUEST"
+    name: "Upfront Fee or Deposit Request"
+    category: "Financial Demand"
+    level: "red_flag"
+    weight: 45
+    is_payment_demand: true
+    description: "Email requests an upfront fee, registration charge, training deposit, or laptop courier payment."
+    explanation: "Genuine employers never ask candidates to pay any registration, training, or equipment fee."
+    patterns:
+      - '(?i)\bregistration\s*fee\b'
+      - '(?i)\btraining\s*(?:fee|charges|deposit)\b'
+      - '(?i)\bprocessing\s*fee\b'
+      - '(?i)\bsecurity\s*deposit\b'
+      - '(?i)\blaptop\s*(?:deposit|charges|courier\s*fee|security)\b'
+      - '(?i)\bid\s*card\s*(?:fee|charges)\b'
+      - '(?i)\brefundable\s*(?:fee|amount|deposit|charge)\b'
+      - '(?i)\bpay\s*(?:rs\.?|inr|₹|\$)\s*\d+\b'
+      - '(?i)\btransfer\s*(?:rs\.?|inr|₹|\$)\s*\d+\b'
+      - '(?i)\bupi(?:\s*id)?\s*[:\-]\s*[a-zA-Z0-9.\-_]+@[a-zA-Z]+\b'
+      - '(?i)\b(?:gpay|phonepe|paytm|google\s*pay)\b'
+      - '(?i)\bqr\s*code\b'
+      - '(?i)\bscan\s*(?:and|&)?\s*pay\b'
+      - '(?i)\bsend\s*screenshot\s*of\s*(?:payment|transaction|receipt)\b'
+      - '(?i)\bseat\s*booking\s*fee\b'
+
+  # ----------------------------------------------------------------------------
+  # 2. FAKE CHEQUE & ADVANCE OVERPAYMENT SCAM
+  # ----------------------------------------------------------------------------
+  - id: "RULE_CHEQUE_OVERPAYMENT"
+    name: "Fake Cheque / Advance Overpayment Scam"
+    category: "Financial Fraud"
+    level: "red_flag"
+    weight: 45
+    is_payment_demand: true
+    description: "Email promises to mail a cheque for home office equipment or asks to wire back excess funds."
+    explanation: "Scammers send counterfeit cheques, instruct victims to buy equipment from a 'vendor', and steal the wired funds once the cheque bounces."
+    patterns:
+      - '(?i)\bmail\s*(?:you\s*)?a\s*(?:cashier\s*)?cheque\b'
+      - '(?i)\bdeposit\s*the\s*(?:check|cheque)\b'
+      - '(?i)\bcheque\s*for\s*(?:home\s*office|equipment|materials)\b'
+      - '(?i)\bwire\s*(?:the\s*)?(?:balance|remaining|excess|difference)\b'
+      - '(?i)\bsend\s*money\s*back\s*to\s*(?:our\s*)?vendor\b'
+      - '(?i)\bpurchase\s*equipment\s*from\s*our\s*approved\s*vendor\b'
+
+  # ----------------------------------------------------------------------------
+  # 3. SENSITIVE CREDENTIALS & IDENTITY THEFT
+  # ----------------------------------------------------------------------------
+  - id: "RULE_ID_OTP_REQUEST"
+    name: "Aadhaar, PAN, OTP, or Banking Credentials Request"
+    category: "Identity Theft"
+    level: "red_flag"
+    weight: 35
+    description: "Demands sensitive government identity copies, OTPs, or banking passwords before in-person verification."
+    explanation: "Unsolicited emails requesting Aadhaar/PAN cards or OTPs pose a severe risk of financial fraud and identity theft."
+    patterns:
+      - '(?i)\baadhaar\s*(?:card|number|photo|copy)\b'
+      - '(?i)\bpan\s*card\s*(?:number|photo|details)\b'
+      - '(?i)\b(?:enter|send|share)\s*(?:the\s*)?otp\b'
+      - '(?i)\bdebit\s*card\s*(?:pin|number|cvv)\b'
+      - '(?i)\batm\s*pin\b'
+      - '(?i)\bnet\s*banking\s*(?:password|credentials)\b'
+      - '(?i)\bcancelled\s*cheque\b'
+
+  # ----------------------------------------------------------------------------
+  # 4. WHATSAPP & TELEGRAM-ONLY COMMUNICATION
+  # ----------------------------------------------------------------------------
+  - id: "RULE_WHATSAPP_TELEGRAM"
+    name: "WhatsApp or Telegram-Only Redirection"
+    category: "Communication Channel"
+    level: "red_flag"
+    weight: 25
+    description: "Recruiter insists on communicating only via Telegram or personal WhatsApp channels."
+    explanation: "Enterprise employers conduct recruitment via authenticated corporate email systems, not untraceable messaging apps."
+    patterns:
+      - '(?i)\bt\.me\/[a-zA-Z0-9_\-]+'
+      - '(?i)\bwa\.me\/[0-9]+'
+      - '(?i)\btelegram\s*(?:group|channel|app|only|link|handle)\b'
+      - '(?i)\bcontact\s*(?:us\s*)?(?:only\s*)?on\s*whatsapp\b'
+      - '(?i)\bjoin\s*(?:our\s*)?telegram\b'
+      - '(?i)\breach\s*out\s*on\s*whatsapp\b'
+
+  # ----------------------------------------------------------------------------
+  # 5. NO-INTERVIEW / DIRECT SELECTION
+  # ----------------------------------------------------------------------------
+  - id: "RULE_NO_INTERVIEW"
+    name: "Selected Without Interview or Evaluation"
+    category: "Hiring Rigor"
+    level: "red_flag"
+    weight: 25
+    description: "Offers immediate employment without any technical test, coding round, or interview."
+    explanation: "Legitimate internships require at least one technical or HR evaluation before issuing an offer."
+    patterns:
+      - '(?i)\bselected\s*(?:directly\s*)?without\s*(?:any\s*)?interview\b'
+      - '(?i)\bdirect\s*(?:selection|offer|hiring|appointment)\b'
+      - '(?i)\bno\s*interview\s*(?:needed|required|conducted)\b'
+      - '(?i)\bselected\s*directly\s*based\s*on\s*(?:your\s*)?(?:resume|profile)\b'
+      - '(?i)\bimmediate\s*offer\s*letter\b'
+      - '(?i)\bdirect\s*shortlisting\s*without\s*test\b'
+
+  # ----------------------------------------------------------------------------
+  # 6. ARTIFICIAL URGENCY & PANIC
+  # ----------------------------------------------------------------------------
+  - id: "RULE_URGENCY_PANIC"
+    name: "Artificial Urgency & Countdown Pressure"
+    category: "Pressure Tactic"
+    level: "caution"
+    weight: 15
+    description: "Manufactures an aggressive deadline to pressure candidates into hasty compliance."
+    explanation: "Scammers create artificial urgency (e.g. 24 hours, offer expires tonight) to stop victims from consulting parents or mentors."
+    patterns:
+      - '(?i)\bwithin\s*24\s*(?:hours|hrs)\b'
+      - '(?i)\bwithin\s*12\s*(?:hours|hrs)\b'
+      - '(?i)\boffer\s*expires\s*(?:today|tonight|in\s*\d+\s*hours)\b'
+      - '(?i)\blimited\s*(?:seats|slots)\s*(?:left|available)\b'
+      - '(?i)\brespond\s*immediately\b'
+      - '(?i)\burgent\s*(?:requirement|joining|confirmation)\b'
+      - '(?i)\blast\s*few\s*slots\b'
+
+  # ----------------------------------------------------------------------------
+  # 7. UNREALISTIC STIPEND & "NO SKILLS" BAIT
+  # ----------------------------------------------------------------------------
+  - id: "RULE_UNREALISTIC_PAY"
+    name: "Unrealistically High Pay for Minimal Effort"
+    category: "Compensation Claims"
+    level: "caution"
+    weight: 20
+    description: "Promises an outlandishly high stipend for part-time fresher roles with 'no skills required'."
+    explanation: "Promising huge stipends (e.g. ₹50,000/month for 1 hour daily) with 'no prior skills' is standard fraud bait."
+    patterns:
+      - '(?i)\bno\s*(?:prior\s*)?skills\s*(?:or\s*experience\s*)?required\b'
+      - '(?i)\bearn\s*(?:rs\.?|₹|inr)?\s*(?:[4-9]\d|\d{3}),?000\s*(?:per\s*month|\/month|\/m)\b'
+      - '(?i)\b100%\s*placement\s*guarantee\b'
+      - '(?i)\bguaranteed\s*stipend\s*without\s*work\b'
+      - '(?i)\beasy\s*data\s*entry.*high\s*pay\b'
+      - '(?i)\bwork\s*1-2\s*hours.*earn\s*daily\b'
+
+  # ----------------------------------------------------------------------------
+  # 8. SHORTENED OR MASKED URLS
+  # ----------------------------------------------------------------------------
+  - id: "RULE_SHORT_LINKS"
+    name: "Masked Destination (URL Shorteners)"
+    category: "Obfuscated Links"
+    level: "caution"
+    weight: 15
+    description: "Contains shortened links that conceal the real landing domain."
+    explanation: "URL shorteners conceal malicious destinations and evade enterprise email security filters."
+    patterns:
+      - '(?i)\bbit\.ly\/[a-zA-Z0-9_\-]+'
+      - '(?i)\btinyurl\.com\/[a-zA-Z0-9_\-]+'
+      - '(?i)\brb\.gy\/[a-zA-Z0-9_\-]+'
+      - '(?i)\bis\.gd\/[a-zA-Z0-9_\-]+'
+      - '(?i)\bcutt\.ly\/[a-zA-Z0-9_\-]+'
+
+  # ----------------------------------------------------------------------------
+  # 9. GENERIC IMPERSONAL GREETING
+  # ----------------------------------------------------------------------------
+  - id: "RULE_GENERIC_GREETING"
+    name: "Generic Impersonal Salutation"
+    category: "Salutation"
+    level: "caution"
+    weight: 10
+    description: "Addresses the recipient with a generic title instead of their personal name."
+    explanation: "Mass spam campaigns use generic greetings like 'Dear Candidate' because scammers do not have your authentic application details."
+    patterns:
+      - '(?i)^\s*dear\s+(?:candidate|student|applicant|job\s*seeker)\b'
+      - '(?i)^\s*respected\s+(?:sir|madam|applicant)\b'
+      - '(?i)^\s*hello\s+applicant\b'
+
+  # ----------------------------------------------------------------------------
+  # 10. SUSPICIOUS EXECUTABLES & ATTACHMENTS
+  # ----------------------------------------------------------------------------
+  - id: "RULE_SUSPICIOUS_ATTACHMENT"
+    name: "Executable Setup or Unknown Software Installation"
+    category: "Malware Risk"
+    level: "red_flag"
+    weight: 30
+    description: "Requests downloading or running .exe, .apk, or script files under the guise of an assessment portal."
+    explanation: "Legitimate corporate recruiters never ask students to run unverified executables or disable antivirus tools."
+    patterns:
+      - '(?i)\.exe\b'
+      - '(?i)\.scr\b'
+      - '(?i)\.bat\b'
+      - '(?i)\.apk\b'
+      - '(?i)\bdownload\s*(?:and\s*run|the\s*attached)\s*(?:tool|setup|software|app)\b'
+      - '(?i)\binstall\s*our\s*(?:portal|app|software)\s*to\s*proceed\b'
+      - '(?i)\bdisable\s*your\s*antivirus\b'
+
+  # ----------------------------------------------------------------------------
+  # 11. COERCIVE DISQUALIFICATION & REMOVAL THREATS
+  # ----------------------------------------------------------------------------
+  - id: "RULE_COERCIVE_DISQUALIFICATION"
+    name: "Threat of Placement Disqualification or Batch Removal"
+    category: "Coercive Pressure"
+    level: "red_flag"
+    weight: 30
+    description: "Threatens to remove candidate from placement support or training batches if they fail to register immediately."
+    explanation: "Scammers use coercive threats of 'disqualification' or 'revoking placement assistance' to trigger panic."
+    patterns:
+      - '(?i)\bremoval\s*from\s*(?:the\s*)?(?:current\s*)?training\s*batch\b'
+      - '(?i)\bavoid\s*disqualification\b'
+      - '(?i)\bno\s*access\s*to\s*(?:the\s*)?internship\s*(?:&|and)\s*placement\s*support\b'
+      - '(?i)\bno\s*training\s*(?:&|and)\s*certification\s*for\s*this\s*cycle\b'
+      - '(?i)\bno\s*further\s*reminders\s*or\s*deadline\s*extensions\b'
+      - '(?i)\bfailure\s*to\s*register\s*before\s*the\s*deadline\b'
+
+  # ----------------------------------------------------------------------------
+  # 12. UNVERIFIED GOOGLE FORMS FOR OFFICIAL ENROLLMENT
+  # ----------------------------------------------------------------------------
+  - id: "RULE_UNVERIFIED_FORM"
+    name: "Generic Google Form for Official Academic Enrollment"
+    category: "Unverified Form"
+    level: "caution"
+    weight: 20
+    description: "Directs applicant to a generic Google Form or Formstack for sensitive batch registration."
+    explanation: "Authentic university placement cells and enterprise employers manage enrollment via authenticated portals, not public Google Forms."
+    patterns:
+      - '(?i)\bdocs\.google\.com\/forms\b'
+      - '(?i)\bforms\.gle\/[a-zA-Z0-9_\-]+'
+
+  # ----------------------------------------------------------------------------
+  # 13. SENDER FROM FREE PERSONAL WEBMAIL
+  # ----------------------------------------------------------------------------
+  - id: "RULE_FREE_MAIL_SENDER"
+    name: "Offer Sent from Free Webmail Service"
+    category: "Sender Authenticity"
+    level: "red_flag"
+    weight: 25
+    description: "Sender uses a free personal webmail service (Gmail, Yahoo, etc.) for recruitment."
+    explanation: "Official corporate and university recruiters write from corporate enterprise domains, not personal Gmail or Yahoo accounts."
+    patterns: []  # Evaluated by feature parser against FREE_MAIL_PROVIDERS
+
+  # ----------------------------------------------------------------------------
+  # 14. REPLY-TO DOMAIN MISMATCH
+  # ----------------------------------------------------------------------------
+  - id: "RULE_REPLYTO_MISMATCH"
+    name: "Reply-To Address Mismatch"
+    category: "Sender Authenticity"
+    level: "red_flag"
+    weight: 25
+    description: "Reply-To header routes responses to a different domain than the sender."
+    explanation: "Phishers often spoof the sender display name but route student replies to their private attacker mailbox."
+    patterns: []  # Evaluated by feature parser
+
+  # ----------------------------------------------------------------------------
+  # 15. EMAIL AUTHENTICATION FAILURE (SPF / DKIM / DMARC)
+  # ----------------------------------------------------------------------------
+  - id: "RULE_AUTH_FAILURE"
+    name: "Email Authentication Failed (SPF/DKIM/DMARC)"
+    category: "Technical Authentication"
+    level: "red_flag"
+    weight: 20
+    description: "Message failed domain cryptographic authentication or authorized sender checks."
+    explanation: "Failing SPF, DKIM, or DMARC indicates the sending server was not authorized by the domain owner (high chance of spoofing)."
+    patterns: []  # Evaluated by feature parser from raw headers
+
+  # ----------------------------------------------------------------------------
+  # 16. POSITIVE SIGN: STRUCTURED TECHNICAL EVALUATION
+  # ----------------------------------------------------------------------------
+  - id: "RULE_STRUCTURED_INTERVIEW"
+    name: "Structured Technical Evaluation / Assessment Mentioned"
+    category: "Legitimate Hiring Signal"
+    level: "good_sign"
+    weight: -12
+    description: "Mentions a recognized coding test platform or multi-stage technical panel."
+    explanation: "Corporate technical internships standardly evaluate candidates via algorithmic platforms or multi-stage panels."
+    patterns:
+      - '(?i)\bcoding\s*(?:assessment|test|round)\b'
+      - '(?i)\btechnical\s*(?:interview|round|evaluation)\b'
+      - '(?i)\bhackerrank\b'
+      - '(?i)\bleetcode\b'
+      - '(?i)\bcodility\b'
+      - '(?i)\bpanel\s*interview\b'
+      - '(?i)\bonline\s*assessment\s*link\b'
+
+  # ----------------------------------------------------------------------------
+  # 17. POSITIVE SIGN: VERIFIED CORPORATE ATS PORTAL
+  # ----------------------------------------------------------------------------
+  - id: "RULE_OFFICIAL_PORTAL"
+    name: "Verified Corporate ATS or Careers Portal"
+    category: "Legitimate Hiring Signal"
+    level: "good_sign"
+    weight: -10
+    description: "Links to an authenticated enterprise Applicant Tracking System."
+    explanation: "Points toward recognized enterprise recruitment platforms (Workday, Greenhouse, Lever, official company careers domain)."
+    patterns:
+      - '(?i)\bcareers\.[a-zA-Z0-9\-]+\.[a-zA-Z]{2,}\b'
+      - '(?i)\bmyworkdayjobs\.com\b'
+      - '(?i)\bgreenhouse\.io\b'
+      - '(?i)\blever\.co\b'
+      - '(?i)\btaleo\.net\b'
+      - '(?i)\bicims\.com\b'
+
