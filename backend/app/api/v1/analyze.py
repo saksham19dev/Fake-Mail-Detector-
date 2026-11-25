@@ -15,6 +15,7 @@ from backend.app.engine.normalizer import normalize_text
 from backend.app.engine.pii import redact_pii
 from backend.app.engine.parser import parse_features
 from backend.app.engine.rules import RulesEngine
+from backend.app.engine.classifier import classifier, fuse_scores
 
 router = APIRouter()
 
@@ -118,7 +119,14 @@ async def analyze_offer(
         is_domain_blocklisted=is_blocklisted
     )
 
-    final_score = rule_results.score
+    # 6. ML Text Classification & Score Fusion (65% Rules + 35% ML)
+    ml_prob = classifier.predict_proba(f"{subject} {redacted_text}")
+    final_score = fuse_scores(
+        rule_score=rule_results.score,
+        ml_probability=ml_prob,
+        hard_override=rule_results.hard_override_triggered
+    )
+
     if final_score >= 55:
         verdict = "likely_fake"
     elif final_score >= 25:

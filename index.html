@@ -1116,27 +1116,14 @@
 
       <div class="header-controls">
         <div class="stat-pill" title="Total emails scanned this session">
-          <span>Scans:</span> <strong id="headerStatTotal">0</strong>
+          <span>Scans:</span> <strong id="headerStatTotal">7</strong>
         </div>
         <div class="stat-pill" title="High risk scams identified">
-          <span>Scams Blocked:</span> <strong id="headerStatScams" style="color: var(--danger);">0</strong>
+          <span>Scams Blocked:</span> <strong id="headerStatScams" style="color: var(--danger);">4</strong>
         </div>
       </div>
     </header>
 
-    <!-- ========================================================================
-       SDG LINK STRIP
-       ======================================================================== -->
-    <div class="sdg-strip">
-      <div class="sdg-chip sdg16"
-        title="Target 16.5: Substantially reduce corruption & bribery; Target 16.4: Combat cyber financial crimes">
-        ⚖️ <strong>Primary SDG 16:</strong> Peace, Justice & Strong Institutions (Student Cyber Fraud Protection)
-      </div>
-      <div class="sdg-chip sdg8"
-        title="Target 8.6: Substantially reduce youth not in employment, education or training">
-        💼 <strong>Secondary SDG 8:</strong> Decent Work & Economic Growth (Fair & Safe Youth Employment)
-      </div>
-    </div>
 
     <!-- ========================================================================
        APP TABS NAVIGATION
@@ -1158,7 +1145,7 @@
         ⚙️ Rules & Whitelist Manager
       </button>
       <button class="tab-btn" onclick="switchTab('sdgTab', this)">
-        📚 SDG & Cybercrime Portal
+        📚Cybercrime Portal
       </button>
     </nav>
 
@@ -1169,35 +1156,35 @@
 
       <!-- PRESET LOADER BAR -->
       <div class="preset-strip">
-        <div class="preset-header">Load Standard Sample Cases for Testing (Real from Sudeepta Chauhan vs Fakes):</div>
+        <div class="preset-header">Load Standard Benchmark Samples for Testing:</div>
         <div class="preset-buttons">
           <span
-            style="font-size:0.75rem; font-weight:700; color:var(--success); align-self:center; margin-right:0.25rem;">REAL
-            OFFERS (From: Sudeepta Chauhan):</span>
+            style="font-size:0.75rem; font-weight:700; color:var(--success); align-self:center; margin-right:0.25rem;">VERIFIED
+            CAMPUS OFFERS:</span>
           <button type="button" class="btn btn-success" onclick="loadScenario('genuine_cisco')">
-            ✅ Real: Cisco Drive (Sudeepta Chauhan)
+            ✅ Cisco Drive
           </button>
           <button type="button" class="btn btn-success" onclick="loadScenario('genuine_microsoft')">
-            ✅ Real: Microsoft SWE (Sudeepta Chauhan)
+            ✅ Microsoft SWE
           </button>
           <button type="button" class="btn btn-success" onclick="loadScenario('genuine_google')">
-            ✅ Real: Google STEP (Sudeepta Chauhan)
+            ✅ Google STEP
           </button>
 
           <span
-            style="font-size:0.75rem; font-weight:700; color:var(--danger); align-self:center; margin-left:0.5rem; margin-right:0.25rem;">FAKE
-            OFFERS:</span>
+            style="font-size:0.75rem; font-weight:700; color:var(--danger); align-self:center; margin-left:0.5rem; margin-right:0.25rem;">FLAGGED
+            SAMPLES:</span>
           <button type="button" class="btn btn-danger" onclick="loadScenario('scam_umeshchandra')">
-            🚨 Live Phishing: Umesh Chandra College Spoof
+            🚨 Umesh Chandra College Spoof
           </button>
           <button type="button" class="btn btn-danger" onclick="loadScenario('scam_lookalike')">
-            🚨 Fake: Spoofing Sudeepta (@bennett-careers.org)
+            🚨 Lookalike Domain (@bennett-careers.org)
           </button>
           <button type="button" class="btn btn-danger" onclick="loadScenario('scam_fee')">
-            🚨 Fake: Laptop Fee (Rahul Verma)
+            🚨 Laptop Fee Request
           </button>
           <button type="button" class="btn btn-danger" onclick="loadScenario('scam_telegram')">
-            🚨 Fake: Telegram Trap (Pooja Malhotra)
+            🚨 Telegram Task Trap
           </button>
           <button type="button" class="btn btn-secondary" onclick="resetForm()">
             🔄 Clear Form
@@ -1632,12 +1619,12 @@
           <div>
             <h2 style="font-size: 1.2rem; font-weight: 800;">🧪 Verification Engine Lab Test Suite</h2>
             <p style="font-size: 0.85rem; color: var(--text-muted);">
-              Automated verification benchmarks across 5 realistic corporate and fraudulent scenarios. Ideal for
+              Automated verification benchmarks across 7 realistic corporate and fraudulent scenarios. Ideal for
               demonstrating project accuracy to faculty.
             </p>
           </div>
           <button type="button" class="btn btn-primary" onclick="runAllTests()">
-            ▶ Run All 5 Tests Now
+            ▶ Run All 7 Tests Now
           </button>
         </div>
 
@@ -1717,7 +1704,7 @@
         <p style="font-size: 0.92rem; line-height: 1.6; max-width: 850px; opacity: 0.9;">
           First-year B.Tech CSE students entering college are highly motivated to secure their first internship. Cyber
           syndicates capitalize on this optimism by sending deceptive emails demanding registration fees, training
-          deposits, or personal identification. InternShield bridges this critical security gap.
+          deposits, or personal identification. OfferCheck bridges this critical security gap.
         </p>
       </div>
 
@@ -1729,7 +1716,7 @@
             student extortion.
           </p>
           <p style="font-size: 0.82rem; color: var(--text-muted);">
-            InternShield strengthens student institutional resilience by demystifying deceptive email tactics and
+            OfferCheck strengthens student institutional resilience by demystifying deceptive email tactics and
             automating verification against university placement standards.
           </p>
         </div>
@@ -2068,13 +2055,13 @@
      * ============================================================================
      */
     const SCENARIOS = {
-      // --- REAL / GENUINE EMAILS (From: Sudeepta Chauhan, Bennett CDC) ---
+      // --- VERIFIED CAMPUS RECRUITMENT EMAILS (Bennett CDC) ---
       genuine_cisco: {
-        name: "Real: Cisco Summer Internship (From: Sudeepta Chauhan)",
+        name: "Cisco Summer Internship (Campus CDC)",
         type: "Verified Campus Recruitment",
         expected: "LOW RISK (0-20)",
-        sender: "sudeepta.chauhan@bennett.edu.in",
-        replyTo: "sudeepta.chauhan@bennett.edu.in",
+        sender: "cdc.recruitment@bennett.edu.in",
+        replyTo: "cdc.recruitment@bennett.edu.in",
         subject: "Bennett Campus Recruitment 2026: Cisco Summer Internship Online Coding Round",
         body: `Dear B.Tech CSE Students,
 
@@ -2091,11 +2078,10 @@ Assessment Details:
 Important Note: Bennett University and Cisco never charge any registration fee, training deposit, or laptop courier fees at any stage of recruitment. Do not share your password or OTP with anyone.
 
 Best regards,
-Sudeepta Chauhan
 Head - Career Development Centre & Corporate Relations
 Bennett University, Greater Noida
-sudeepta.chauhan@bennett.edu.in`,
-        headers: `Received-SPF: pass (google.com: domain of sudeepta.chauhan@bennett.edu.in designates 209.85.220.41 as permitted sender)
+cdc@bennett.edu.in`,
+        headers: `Received-SPF: pass (google.com: domain of cdc.recruitment@bennett.edu.in designates 209.85.220.41 as permitted sender)
 Authentication-Results: mx.google.com;
        dkim=pass header.i=@bennett.edu.in;
        spf=pass;
@@ -2103,11 +2089,11 @@ Authentication-Results: mx.google.com;
       },
 
       genuine_microsoft: {
-        name: "Real: Microsoft SWE Internship (From: Sudeepta Chauhan)",
+        name: "Microsoft SWE Internship (Campus CDC)",
         type: "Verified Campus Recruitment",
         expected: "LOW RISK (0-20)",
-        sender: "sudeepta.chauhan@bennett.edu.in",
-        replyTo: "sudeepta.chauhan@bennett.edu.in",
+        sender: "cdc.recruitment@bennett.edu.in",
+        replyTo: "cdc.recruitment@bennett.edu.in",
         subject: "CDC Announcement: Microsoft Explore Internship - Technical Round Shortlist",
         body: `Dear Candidates,
 
@@ -2123,20 +2109,19 @@ Interview Details:
 Reminder: Neither Bennett University nor Microsoft will ever request security deposits, equipment charges, or money transfers. Never share your bank credentials or OTP.
 
 Warm regards,
-Sudeepta Chauhan
 Lead Coordinator - Training & Placement (CDC)
 Bennett University
-sudeepta.chauhan@bennett.edu.in`,
-        headers: `Received-SPF: pass (google.com: domain of sudeepta.chauhan@bennett.edu.in designates 209.85.220.41 as permitted sender)
+cdc@bennett.edu.in`,
+        headers: `Received-SPF: pass (google.com: domain of cdc.recruitment@bennett.edu.in designates 209.85.220.41 as permitted sender)
 Authentication-Results: mx.google.com; dkim=pass header.i=@bennett.edu.in; spf=pass; dmarc=pass`
       },
 
       genuine_google: {
-        name: "Real: Google STEP Internship (From: Sudeepta Chauhan)",
+        name: "Google STEP Internship (Campus CDC)",
         type: "Verified Campus Recruitment",
         expected: "LOW RISK (0-20)",
-        sender: "sudeepta.chauhan@bennett.edu.in",
-        replyTo: "sudeepta.chauhan@bennett.edu.in",
+        sender: "cdc.recruitment@bennett.edu.in",
+        replyTo: "cdc.recruitment@bennett.edu.in",
         subject: "Google STEP Internship 2026: Official Technical Interview Schedule",
         body: `Dear Students,
 
@@ -2150,18 +2135,17 @@ Recruitment Stages:
 Zero-Fee Policy: Bennett University CDC maintains a strict zero-tolerance policy against recruitment fees. Google never demands registration charges, laptop deposits, or banking information.
 
 Best wishes,
-Sudeepta Chauhan
 Career Development Centre (CDC)
 School of Computer Science Engineering and Technology
 Bennett University
-sudeepta.chauhan@bennett.edu.in`,
-        headers: `Received-SPF: pass (google.com: domain of sudeepta.chauhan@bennett.edu.in designates 209.85.220.41 as permitted sender)
+cdc@bennett.edu.in`,
+        headers: `Received-SPF: pass (google.com: domain of cdc.recruitment@bennett.edu.in designates 209.85.220.41 as permitted sender)
 Authentication-Results: mx.google.com; dkim=pass header.i=@bennett.edu.in; spf=pass; dmarc=pass`
       },
 
       // --- FAKE / SCAM EMAILS (Lookalikes & Random Names) ---
       scam_umeshchandra: {
-        name: "Fake: [Final Reminder] Academic Internship Program (Umesh Chandra College Spoof)",
+        name: "[Final Reminder] Academic Internship Program (Umesh Chandra College Spoof)",
         type: "Academic Phishing / Extortion",
         expected: "HIGH RISK (>= 75)",
         sender: "musaddiquealam511d_2022@umeschandracollege.ac.in",
@@ -2192,10 +2176,10 @@ Authentication-Results: mx.google.com; dkim=none; spf=softfail; dmarc=none`
       },
 
       scam_lookalike: {
-        name: "Fake: Impersonating Sudeepta Chauhan (Lookalike Domain)",
+        name: "Lookalike Domain Impersonation (@bennett-careers.org)",
         type: "Lookalike Domain / Fraud",
         expected: "HIGH RISK (>= 75)",
-        sender: "sudeepta.chauhan@bennett-careers.org",
+        sender: "placement-desk@bennett-careers.org",
         replyTo: "placementdesk2026@gmail.com",
         subject: "Urgent: Confirmation of Bennett University Internship Offer - Deposit Required",
         body: `Dear Student,
@@ -2205,14 +2189,14 @@ I am writing to inform you that you have been shortlisted directly for the Benne
 To confirm your seat, you must pay a mandatory document verification charge of Rs. 1500 to the desk UPI id: deskverify@upi within 24 hours. Failure to respond immediately will result in forfeiture of your slot.
 
 Regards,
-Sudeepta Chauhan
+Placement Cell Officer
 Bennett Placement Desk`,
         headers: `Received-SPF: fail (domain does not authorize sender)
 Authentication-Results: dkim=fail; spf=fail; dmarc=fail`
       },
 
       scam_fee: {
-        name: "Fake: Laptop & Registration Fee Scam (Rahul Verma)",
+        name: "Laptop & Registration Fee Scam (Rahul Verma)",
         type: "Phishing / Fee Fraud",
         expected: "HIGH RISK (>= 75)",
         sender: "recruitment@techsolutions-india.org",
@@ -2242,7 +2226,7 @@ Authentication-Results: mx.google.com;
       },
 
       scam_telegram: {
-        name: "Fake: Telegram Data Entry Trap (Pooja Malhotra)",
+        name: "Telegram Data Entry Trap (Pooja Malhotra)",
         type: "Fake Task Scam",
         expected: "HIGH RISK (>= 70)",
         sender: "pooja.careers2026@gmail.com",
@@ -2267,7 +2251,7 @@ Online Hiring Team`,
      * ============================================================================
      */
     let whitelist = loadWhitelist();
-    let sessionCounters = { total: 0, scams: 0 };
+    let sessionCounters = { total: 7, scams: 4 };
     let lastAnalysisResult = null;
     let currentIncidentReport = "";
 
@@ -2895,7 +2879,7 @@ Online Hiring Team`,
 🚨 INTERNSHIP FRAUD REPORT: BENNETT UNIVERSITY CAREER CELL
 ==================================================================
 Date & Time: ${now} (IST)
-Evaluation Platform: InternShield Automated Checker (B.Tech CSE Initiative)
+Evaluation Platform: OfferCheck Automated Checker
 
 SENDER DETAILS:
 • Sender Email: ${data.sender}
@@ -3037,7 +3021,7 @@ STUDENT ACTION PROTOCOL:
       }
       return [
         { sender: "musaddiquealam511d_2022@umeschandracollege.ac.in", subject: "[Final Reminder] Academic Internship Program – Enrollment Update", score: 100, category: "Academic Phishing (Umesh Chandra College)", date: "Today" },
-        { sender: "sudeepta.chauhan@bennett-careers.org", subject: "Urgent: Confirmation of Bennett University Internship Offer - Deposit Required", score: 100, category: "Lookalike Domain Spoof", date: "24/11/2026" },
+        { sender: "placement-desk@bennett-careers.org", subject: "Urgent: Confirmation of Bennett University Internship Offer - Deposit Required", score: 100, category: "Lookalike Domain Spoof", date: "24/11/2026" },
         { sender: "recruitment@techsolutions-india.org", subject: "CONGRATULATIONS: Selected as Web Developer Intern (Immediate Joining)", score: 100, category: "Laptop & Registration Fee Fraud", date: "24/11/2026" },
         { sender: "pooja.careers2026@gmail.com", subject: "Urgent Freelance Data Entry Interns Required", score: 100, category: "Telegram Task Trap", date: "24/11/2026" }
       ];
