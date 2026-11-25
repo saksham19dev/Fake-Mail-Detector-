@@ -79,6 +79,26 @@ def extract_domain(email_address: str) -> str:
     return clean
 
 
+def is_free_email_provider(email_address: str) -> bool:
+    """Check if the sender email address uses a public free mail service."""
+    domain = extract_domain(email_address)
+    return domain in FREE_MAIL_PROVIDERS
+
+
+def check_reply_to_mismatch(sender: str, reply_to: str) -> bool:
+    """Check if Reply-To domain differs from the From sender domain."""
+    s_dom = extract_domain(sender)
+    r_dom = extract_domain(reply_to)
+    return bool(r_dom and r_dom != s_dom)
+
+
+def parse_email_headers(headers_str: str) -> Dict[str, str]:
+    """Parse authentication headers and return dict of status values."""
+    auth = parse_header_auth(headers_str)
+    return {"spf": auth.spf, "dkim": auth.dkim, "dmarc": auth.dmarc}
+
+
+
 def parse_header_auth(headers_str: str) -> HeaderAuth:
     """Extract SPF, DKIM, and DMARC status from raw header block."""
     auth = HeaderAuth()

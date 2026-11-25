@@ -81,3 +81,8 @@ def normalize_email_text(raw_text: str) -> str:
 
     return cleaned.strip()
 
+
+# Alias for concise import
+normalize_text = normalize_email_text
+
+
